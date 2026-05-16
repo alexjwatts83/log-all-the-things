@@ -7,18 +7,24 @@ namespace LogAllTheThings.Api.Controllers
     [Route("api/[controller]")]
     public class LogsController : ControllerBase
     {
-        private static readonly List<LogEntry> Entries = new();
+        private readonly Data.LogsDbContext _db;
+
+        public LogsController(Data.LogsDbContext db)
+        {
+            _db = db;
+        }
 
         [HttpGet]
         public ActionResult<IEnumerable<LogEntry>> Get()
         {
-            return Ok(Entries.OrderByDescending(entry => entry.Timestamp));
+            var entries = _db.LogEntries.OrderByDescending(e => e.Timestamp).ToList();
+            return Ok(entries);
         }
 
         [HttpGet("{id:guid}")]
         public ActionResult<LogEntry> Get(Guid id)
         {
-            var entry = Entries.FirstOrDefault(x => x.Id == id);
+            var entry = _db.LogEntries.Find(id);
             return entry is null ? NotFound() : Ok(entry);
         }
 
@@ -32,20 +38,22 @@ namespace LogAllTheThings.Api.Controllers
 
             entry.Id = Guid.NewGuid();
             entry.Timestamp = entry.Timestamp == default ? DateTime.UtcNow : entry.Timestamp;
-            Entries.Add(entry);
+            _db.LogEntries.Add(entry);
+            _db.SaveChanges();
             return CreatedAtAction(nameof(Get), new { id = entry.Id }, entry);
         }
 
         [HttpDelete("{id:guid}")]
         public ActionResult Delete(Guid id)
         {
-            var entry = Entries.FirstOrDefault(x => x.Id == id);
+            var entry = _db.LogEntries.Find(id);
             if (entry is null)
             {
                 return NotFound();
             }
 
-            Entries.Remove(entry);
+            _db.LogEntries.Remove(entry);
+            _db.SaveChanges();
             return NoContent();
         }
     }

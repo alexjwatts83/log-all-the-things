@@ -1,5 +1,11 @@
 const baseUrl = '/api/logs';
 
+const typeMap = {
+  Medicine: 1,
+  Food: 2,
+  Custom: 3,
+};
+
 export async function fetchLogs() {
   const response = await fetch(baseUrl);
   if (!response.ok) {
@@ -9,10 +15,19 @@ export async function fetchLogs() {
 }
 
 export async function createLog(log) {
+  // Accept form payloads that use `type` (string) and map to TypeId expected by the API.
+  const requestBody = {
+    TypeId: log.typeId ?? typeMap[log.type] ?? 0,
+    Description: log.description,
+    Details: log.details ?? null,
+    Category: log.category ?? null,
+    CustomName: log.customName ?? null,
+  };
+
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(log),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {

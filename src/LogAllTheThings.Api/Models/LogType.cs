@@ -1,9 +1,8 @@
 namespace LogAllTheThings.Api.Models
 {
-    public enum LogType
+    public class LogType
     {
-        Medicine,
-        Food,
-        Custom
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }

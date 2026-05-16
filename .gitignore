@@ -436,3 +436,6 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+/src/LogAllTheThings.Api/logs.db-shm
+/src/LogAllTheThings.Api/logs.db-wal
+/src/LogAllTheThings.Api/logs.db
