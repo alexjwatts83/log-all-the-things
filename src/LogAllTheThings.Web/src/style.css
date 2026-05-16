@@ -1,0 +1,173 @@
+:root {
+  color-scheme: light;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f5f7fb;
+  color: #111827;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f5f7fb;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+.app-shell {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+header p {
+  margin: 0.75rem 0 0;
+  color: #475569;
+}
+
+.controls {
+  margin-top: 2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.tabs button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1f2937;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tabs button.active,
+.tabs button:hover {
+  border-color: #2563eb;
+  color: #1d4ed8;
+  background: #eff6ff;
+}
+
+.log-form,
+.history {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.log-form label {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.log-form input,
+.log-form textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: #f8fafc;
+}
+
+.log-form button {
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 0.85rem;
+  padding: 0.9rem 1.25rem;
+  cursor: pointer;
+}
+
+.log-form button:hover {
+  background: #1d4ed8;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.history-header h2 {
+  margin: 0;
+}
+
+.log-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.log-card {
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.85rem;
+  background: #f8fafc;
+}
+
+.log-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.log-card header strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.log-card header span,
+.log-card header div:last-child {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.log-card p {
+  margin: 0 0 0.75rem;
+  line-height: 1.7;
+}
+
+.log-card pre {
+  margin: 0;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  overflow-x: auto;
+  color: #334155;
+}
+
+.empty-state {
+  margin: 0;
+  color: #475569;
+}
+
+.error-message {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}

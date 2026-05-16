@@ -198,6 +198,15 @@ AutoTest.Net/
 
 # DocProject is a documentation generator add-in
 DocProject/buildhelp/
+
+# Node / frontend artifacts
+node_modules/
+dist/
+.build/
+.vite/
+npm-debug.log*
+yarn-error.log*
+
 DocProject/Help/*.HxT
 DocProject/Help/*.HxC
 DocProject/Help/*.hhc
