@@ -1,0 +1,1 @@
+export const medicineTypes = ['Panadol Extra', 'Panadol Rapid'];

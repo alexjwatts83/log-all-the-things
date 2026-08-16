@@ -1,6 +1,7 @@
 # Log All The Things
 
-A React frontend and ASP.NET Core backend project for logging medicine, food, and custom events.
+A React frontend and ASP.NET Core backend project for creating, editing, and deleting medicine,
+food, and custom event logs.
 
 ## Structure
 
@@ -39,10 +40,11 @@ The React app proxies API requests to `http://localhost:5000` and lets you log m
 
 - `GET /api/logs` — retrieve all log entries.
 - `POST /api/logs` — create a new log entry.
+- `PUT /api/logs/{id}` — update an existing log entry.
 - `GET /api/logs/{id}` — retrieve a log entry by ID.
 - `DELETE /api/logs/{id}` — delete a log entry.
 
 ## Notes
 
-- The backend uses in-memory storage for simplicity.
-- In production, replace the in-memory store with a database provider.
+- The backend persists entries in a local SQLite database.
+- Medicine logs require either Panadol Extra or Panadol Rapid and default to a quantity of `2`.

@@ -1,6 +1,6 @@
 # LogAllTheThings Web
 
-React frontend for creating and viewing Medicine, Food, and Custom log entries.
+React frontend for creating, viewing, editing, and deleting Medicine, Food, and Custom log entries.
 
 ## Prerequisites
 
@@ -63,13 +63,16 @@ also support an optional event name.
 
 Selecting **Medicine** reveals:
 
-- An optional **Medicine type** selector with Panadol Extra and Panadol Rapid.
+- A required **Medicine type** selector with Panadol Extra and Panadol Rapid. Panadol Extra is the
+  default.
 - A positive whole-number **Quantity** field that defaults to `2`.
 
-Medicine does not show a description field. The selected medicine type becomes the description;
-when no type is selected, the description is `Medicine`.
+Medicine does not show a description field. The selected medicine type becomes the description.
 
-To add another medicine, update `medicineTypes` in `src/components/LogForm.jsx` and
+Each recent log has **Edit** and **Delete** actions. Edit opens the relevant fields directly in the
+log card; the log type cannot be changed. Delete asks for confirmation before removing the entry.
+
+To add another medicine, update `medicineTypes` in `src/medicineTypes.js` and
 `SupportedMedicines.Names` in the API. The API allowlist remains the source of validation truth.
 
 ## Scripts
@@ -97,6 +100,7 @@ src/
   api.js                 API request and type mapping helpers
   App.jsx                Main application state and layout
   main.jsx               React entry point
+  medicineTypes.js       Shared Medicine selector options
   style.css              Application styles
   components/
     LogForm.jsx           Entry form

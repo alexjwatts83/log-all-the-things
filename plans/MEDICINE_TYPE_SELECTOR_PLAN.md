@@ -14,13 +14,13 @@ persist both values in the API, and show them in recent log entries.
 - Initially provide these options:
   - Panadol Extra
   - Panadol Rapid
-- Allow the user to optionally select a medicine type before submitting a Medicine log.
+- Require the user to select a medicine type before submitting a Medicine log.
 - Show a quantity control for Medicine logs and default it to `2`.
 - Require the Medicine quantity to be a positive whole number.
 - Persist the selected medicine as its own field rather than placing it in description, details,
   or category.
 - Persist the Medicine quantity as its own numeric field.
-- Derive the Medicine description from the selected medicine type, falling back to `Medicine`.
+- Derive the Medicine description from the selected medicine type.
 - Return the medicine value from the API and display it in the recent-log list.
 - Keep existing Food and Custom log behavior unchanged.
 - Preserve existing SQLite data when the schema is updated.
@@ -30,7 +30,6 @@ persist both values in the API, and show them in recent log entries.
 - Medicine inventory or stock tracking.
 - Dosage schedules, reminders, or notifications.
 - A database-managed medicine catalogue in the first version.
-- Editing existing log entries.
 - Retrofitting a medicine value onto historical entries.
 
 ---
@@ -52,12 +51,12 @@ Both properties remain nullable so existing rows and non-Medicine entries contin
 
 For entries with `TypeId == 1` (Medicine):
 
-- `MedicineName` may be null or empty when the user does not select a medicine type.
-- When supplied, accept only values from the supported medicine allowlist.
-- Return `400 Bad Request` for an unsupported non-empty value.
+- `MedicineName` is required.
+- Accept only values from the supported medicine allowlist.
+- Return `400 Bad Request` for a missing or unsupported value.
 - `MedicineQuantity` defaults to `2` when omitted by a Medicine request.
 - Reject Medicine quantities below `1` or values that are not whole numbers.
-- Replace `Description` with the canonical medicine name, or `Medicine` when no type is selected.
+- Replace `Description` with the canonical medicine name.
 
 For Food and Custom entries, ignore or clear medicine-specific values before persistence.
 
@@ -85,14 +84,8 @@ The quantity defaults to `2` whenever the form starts a new Medicine entry.
 
 Hide the Description input for Medicine logs. Food and Custom logs continue to require it.
 
-Default option:
-
-```text
-No medicine type selected
-```
-
-Reset the medicine selection and quantity (`2`) after a successful Medicine submission and when
-appropriate as the active log type changes.
+Default the medicine selection to Panadol Extra. Reset it to Panadol Extra and reset the quantity
+to `2` after a successful Medicine submission and when appropriate as the active log type changes.
 
 ### Recent-log display
 
@@ -161,7 +154,7 @@ schema update (smallest change)**.
 - [x] Add `medicineQuantity` state with an initial value of `2`.
 - [x] Render the **Medicine type** selector only for Medicine logs.
 - [x] Include a default **No medicine type selected** option.
-- [x] Keep the selector optional for Medicine submissions.
+- [x] Require the selector for Medicine submissions.
 - [x] Render a Medicine-only numeric **Quantity** input with minimum `1` and step `1`.
 - [x] Include `medicineName` in the form payload.
 - [x] Include `medicineQuantity` in the form payload.
@@ -193,8 +186,8 @@ schema update (smallest change)**.
 - [x] Create a Panadol Rapid entry and verify it persists after refresh.
 - [x] Verify the Medicine quantity initially displays `2`.
 - [x] Create a Medicine entry with a quantity other than `2` and verify it persists.
-- [x] Create a Medicine entry without selecting a medicine type and verify it succeeds.
-- [x] Verify Medicine derives its description from the selected type or falls back to `Medicine`.
+- [x] Verify the API rejects a Medicine entry without a medicine type.
+- [x] Verify Medicine derives its description from the selected type.
 - [x] Verify Food and Custom still require a description.
 - [x] Verify the API rejects an unsupported medicine value.
 - [x] Verify the API rejects zero, negative, and fractional Medicine quantities.

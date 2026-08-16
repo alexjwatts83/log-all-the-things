@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchLogs, createLog } from './api';
+import { fetchLogs, createLog, deleteLog, updateLog } from './api';
 import LogForm from './components/LogForm';
 import LogList from './components/LogList';
 
@@ -39,6 +39,30 @@ export default function App() {
     }
   }
 
+  async function handleUpdate(id, entry) {
+    try {
+      const updated = await updateLog(id, entry);
+      setLogs(current => current.map(log => log.id === id ? updated : log));
+      setError('');
+      return true;
+    } catch (err) {
+      setError('Unable to update log.');
+      return false;
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await deleteLog(id);
+      setLogs(current => current.filter(log => log.id !== id));
+      setError('');
+      return true;
+    } catch (err) {
+      setError('Unable to delete log.');
+      return false;
+    }
+  }
+
   return (
     <div className="app-shell">
       <header>
@@ -67,7 +91,7 @@ export default function App() {
           <span>{loading ? 'Loading…' : `${logs.length} entries`}</span>
         </div>
         {error && <div className="error-message">{error}</div>}
-        <LogList logs={logs} />
+        <LogList logs={logs} onUpdate={handleUpdate} onDelete={handleDelete} />
       </section>
     </div>
   );

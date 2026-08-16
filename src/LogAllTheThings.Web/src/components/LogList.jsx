@@ -1,4 +1,11 @@
-export default function LogList({ logs }) {
+import { useState } from 'react';
+import { medicineTypes } from '../medicineTypes';
+
+export default function LogList({ logs, onUpdate, onDelete }) {
+  const [editingId, setEditingId] = useState(null);
+  const [draft, setDraft] = useState(null);
+  const [busyId, setBusyId] = useState(null);
+
   if (!logs.length) {
     return <p className="empty-state">No logs yet. Add a medicine, food, or custom event log.</p>;
   }
@@ -9,6 +16,50 @@ export default function LogList({ logs }) {
     if (id === 3) return 'Custom';
     return 'General';
   };
+
+  function beginEdit(log) {
+    setEditingId(log.id);
+    setDraft({
+      typeId: log.typeId,
+      description: log.description ?? '',
+      details: log.details ?? '',
+      category: log.category ?? '',
+      customName: log.customName ?? '',
+      medicineName: log.medicineName ?? medicineTypes[0],
+      medicineQuantity: String(log.medicineQuantity ?? 2),
+    });
+  }
+
+  async function saveEdit(event, log) {
+    event.preventDefault();
+    const isMedicine = log.typeId === 1;
+    const quantity = Number(draft.medicineQuantity);
+    if ((!isMedicine && !draft.description.trim()) ||
+        (isMedicine && (!draft.medicineName || !Number.isInteger(quantity) || quantity < 1))) {
+      return;
+    }
+
+    setBusyId(log.id);
+    const saved = await onUpdate(log.id, {
+      ...draft,
+      medicineQuantity: isMedicine ? quantity : undefined,
+    });
+    setBusyId(null);
+    if (saved) {
+      setEditingId(null);
+      setDraft(null);
+    }
+  }
+
+  async function remove(log) {
+    if (!globalThis.confirm(`Delete "${log.description}"?`)) {
+      return;
+    }
+
+    setBusyId(log.id);
+    await onDelete(log.id);
+    setBusyId(null);
+  }
 
   return (
     <div className="log-list">
@@ -28,6 +79,63 @@ export default function LogList({ logs }) {
             </header>
             <p>{log.description}</p>
             {log.details && <pre>{log.details}</pre>}
+            {editingId === log.id ? (
+              <form className="edit-log-form" onSubmit={event => saveEdit(event, log)}>
+                {log.typeId === 1 ? (
+                  <div className="medicine-fields">
+                    <label>
+                      Medicine type
+                      <select value={draft.medicineName}
+                              onChange={event => setDraft(current => ({ ...current, medicineName: event.target.value }))}
+                              required>
+                        {medicineTypes.map(medicine => (
+                          <option key={medicine} value={medicine}>{medicine}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      Quantity
+                      <input type="number" min="1" step="1" value={draft.medicineQuantity}
+                             onChange={event => setDraft(current => ({ ...current, medicineQuantity: event.target.value }))}
+                             required />
+                    </label>
+                  </div>
+                ) : (
+                  <label>
+                    Description
+                    <input value={draft.description}
+                           onChange={event => setDraft(current => ({ ...current, description: event.target.value }))}
+                           required />
+                  </label>
+                )}
+                {log.typeId === 3 && (
+                  <label>
+                    Event name
+                    <input value={draft.customName}
+                           onChange={event => setDraft(current => ({ ...current, customName: event.target.value }))} />
+                  </label>
+                )}
+                <label>
+                  Details
+                  <textarea rows="3" value={draft.details}
+                            onChange={event => setDraft(current => ({ ...current, details: event.target.value }))} />
+                </label>
+                <label>
+                  Category
+                  <input value={draft.category}
+                         onChange={event => setDraft(current => ({ ...current, category: event.target.value }))} />
+                </label>
+                <div className="log-actions">
+                  <button type="submit" disabled={busyId === log.id}>Save</button>
+                  <button type="button" className="secondary" onClick={() => setEditingId(null)}>Cancel</button>
+                </div>
+              </form>
+            ) : (
+              <div className="log-actions">
+                <button type="button" className="secondary" onClick={() => beginEdit(log)}>Edit</button>
+                <button type="button" className="danger" disabled={busyId === log.id} onClick={() => remove(log)}>Delete</button>
+              </div>
+            )}
           </article>
         );
       })}
