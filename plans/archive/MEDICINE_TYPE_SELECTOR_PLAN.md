@@ -1,5 +1,9 @@
 # Medicine Type Selector - Implementation Plan
 
+> **Archived:** This plan is retained for historical reference. Medicine selection, validation,
+> quantity tracking, editing, and display have been implemented. See
+> `src/LogAllTheThings.Api/README.md` and `src/LogAllTheThings.Web/README.md` for current behavior.
+
 ## Overview
 
 Add medicine-specific controls to the log form so users can record which medicine they took and

@@ -1,5 +1,9 @@
 # Dev Launcher App - Project Plan
 
+> **Archived:** This plan is retained for historical reference. The launcher has been implemented;
+> see `tools/DevLauncher/README.md` for current setup, behavior, and known limitations. Unchecked
+> items below are optional follow-up ideas, not active project requirements.
+
 ## Project Overview
 A small desktop control panel for this repository that lets a developer start and stop the
 LogAllTheThings stack (API + web) with buttons, and streams the live console output of those

@@ -8,6 +8,10 @@ food, and custom event logs.
 - `LogAllTheThings.sln` — Visual Studio solution containing the API project.
 - `src/LogAllTheThings.Api/` — ASP.NET Core Web API backend.
 - `src/LogAllTheThings.Web/` — React frontend built with Vite.
+- `tools/DevLauncher/` — WPF control panel for running the API and frontend locally.
+- `scripts/` — PowerShell scripts for starting, stopping, and packaging the application.
+- `plans/DASHBOARD_PLAN.md` — active implementation plan for the dashboard.
+- `plans/archive/` — completed plans retained for historical reference.
 
 ## Run the backend
 
