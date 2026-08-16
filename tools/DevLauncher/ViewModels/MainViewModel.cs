@@ -11,6 +11,8 @@ public sealed class MainViewModel : IDisposable
     private const int MaximumLogLines = 5000;
     private readonly ProcessSupervisor _supervisor = new();
 
+    public event Action<ServiceState>? WebStateChanged;
+
     public MainViewModel()
     {
         Services = new ObservableCollection<ServiceViewModel>(
@@ -89,6 +91,10 @@ public sealed class MainViewModel : IDisposable
     private void OnStateChanged(string serviceId, ServiceState state, int? processId) => Dispatch(() =>
     {
         Services.First(service => service.Definition.Id == serviceId).Update(state, processId);
+        if (serviceId == "web")
+        {
+            WebStateChanged?.Invoke(state);
+        }
     });
 
     private void AddLauncherLog(string text)

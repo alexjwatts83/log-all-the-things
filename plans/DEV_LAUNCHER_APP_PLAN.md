@@ -15,6 +15,7 @@ Replaces the manual workflow of running `scripts/start.ps1` and `scripts/stop.ps
 - Live status indicator per service: `Stopped`, `Starting`, `Running`, `Stopping`, `Crashed`.
 - Log panel that streams stdout/stderr from each process in real time.
 - Log panel supports: filter by service, filter by text, clear, auto-scroll toggle, save to file.
+- App tab embeds the running web frontend inside the launcher.
 - Closing the app cleanly stops every child process it started.
 
 ## Non-Goals
@@ -142,7 +143,8 @@ after a confirmation prompt.
 - Toolbar: **Start All**, **Stop All**, **Restart All**.
 - One `ServiceCard` per service: name, state badge, pid, uptime, clickable localhost link,
   Start / Stop / Restart buttons.
-- `LogPanel` fills the remaining height.
+- **Logs** and **App** tabs fill the remaining height.
+- The **App** tab uses WebView2 and loads the frontend when the Web service reaches `Running`.
 
 ### Log panel behaviour
 - Colour-coded per service; `stderr` lines in red.
@@ -184,8 +186,9 @@ Much smaller surface than a web version, but still worth stating:
 
 ### Phase 3 — Full UI
 1. `ServiceCard` with state badge, pid, uptime, port link.
-2. Start All / Stop All / Restart All with correct ordering.
+2. [x] Start All / Stop All / Restart All with correct ordering.
 3. Log filters, auto-scroll, Clear, Save to file.
+4. [x] Embedded App tab with reload and open-in-browser controls.
 
 ### Phase 4 — Robustness
 1. Ready-state detection via log pattern match.

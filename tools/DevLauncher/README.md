@@ -39,6 +39,8 @@ dotnet build .\tools\DevLauncher\DevLauncher.csproj
 - **Auto-scroll** keeps the newest process output visible.
 - **Open log file** opens the persistent launcher log.
 - **Clear** removes the currently displayed log lines.
+- The **App** tab embeds the web frontend after the Web service reaches `Running`.
+- **Refresh** reloads the embedded app, and **Open in browser** opens it externally.
 - Closing the launcher stops all processes that it started.
 
 ## Logs
@@ -84,5 +86,6 @@ Then start the services again from the launcher.
 ## Current limitations
 
 - Windows-only because the launcher uses WPF.
-- Logs are held in memory and are not persisted after the launcher closes.
+- The App tab requires the Microsoft Edge WebView2 Runtime (included with current Windows releases).
+- The on-screen log is capped at 5,000 lines; the complete persistent log remains available on disk.
 - Log filtering, saving logs, uptime display, and in-app port recovery are planned but not implemented yet.
