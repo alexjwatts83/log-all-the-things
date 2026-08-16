@@ -93,6 +93,57 @@ From the repository root:
 npm run build --prefix .\src\LogAllTheThings.Web
 ```
 
+## Build and sideload the Android APK
+
+The Android build uses Capacitor and produces a debug APK that can be installed directly without
+the Google Play Store.
+
+Prerequisites:
+
+- Node.js 22 or later and npm.
+- Android Studio with Android SDK Platform 36 installed.
+- Java JDK 21 or later configured through `JAVA_HOME` or `PATH`, or Android Studio installed in its
+  standard location.
+- `ANDROID_HOME` set when the SDK is not at `%LOCALAPPDATA%\Android\Sdk`.
+- A LogAllTheThings API URL reachable from the phone.
+
+Find the PC's Wi-Fi IPv4 address with `ipconfig`, start the API on all network interfaces, and allow
+port 5000 through Windows Firewall when prompted:
+
+```powershell
+dotnet run --project .\src\LogAllTheThings.Api\LogAllTheThings.Api.csproj --urls http://0.0.0.0:5000
+```
+
+In another terminal, build the APK using that PC address rather than `localhost`:
+
+```powershell
+.\scripts\build-android-apk.ps1 -ApiUrl http://192.168.1.20:5000
+```
+
+The script installs npm dependencies, builds the web app with `VITE_API_BASE_URL`, creates
+the generated Capacitor Android project when needed, synchronizes its assets, and runs Gradle. The
+result is copied to:
+
+```text
+artifacts/android/LogAllTheThings-debug.apk
+```
+
+Transfer that file to the phone and open it. Android will ask you to allow **Install unknown apps**
+for the browser or file manager used to open the APK. The PC and API must remain available while
+using this version of the app because data is still stored by the ASP.NET Core API.
+
+Re-run the same command after frontend changes. Supply `-SkipInstall` only when dependencies are
+already installed. The generated `android` directory and APK artifacts are intentionally ignored
+by Git.
+
+### Android cannot load logs
+
+- Confirm the phone and PC are on the same Wi-Fi network.
+- Open `http://PC-IP:5000/api/logs` in the phone's browser to test connectivity.
+- Do not use `localhost` in `-ApiUrl`; on Android it refers to the phone.
+- Confirm the API uses `--urls http://0.0.0.0:5000` and Windows Firewall permits port 5000.
+- Rebuild the APK whenever its API URL needs to change.
+
 ## Project structure
 
 ```text
