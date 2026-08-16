@@ -1,12 +1,22 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+
+const medicineTypes = ['Panadol Extra', 'Panadol Rapid'];
 
 export default function LogForm({ type, onSubmit }) {
   const [description, setDescription] = useState('');
   const [details, setDetails] = useState('');
   const [category, setCategory] = useState('');
   const [customName, setCustomName] = useState('');
+  const [medicineName, setMedicineName] = useState('');
+  const [medicineQuantity, setMedicineQuantity] = useState('2');
 
   const isCustom = type === 'Custom';
+  const isMedicine = type === 'Medicine';
+
+  useEffect(() => {
+    setMedicineName('');
+    setMedicineQuantity('2');
+  }, [type]);
 
   const payload = useMemo(() => ({
     type,
@@ -14,19 +24,28 @@ export default function LogForm({ type, onSubmit }) {
     details: details || undefined,
     category: category || undefined,
     customName: customName || undefined,
-  }), [type, description, details, category, customName]);
+    medicineName: isMedicine && medicineName ? medicineName : undefined,
+    medicineQuantity: isMedicine ? Number(medicineQuantity) : undefined,
+  }), [type, description, details, category, customName, isMedicine, medicineName, medicineQuantity]);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (!description.trim()) {
+    const quantity = Number(medicineQuantity);
+    if ((!isMedicine && !description.trim()) || (isMedicine && (!Number.isInteger(quantity) || quantity < 1))) {
       return;
     }
 
-    onSubmit(payload);
+    const saved = await onSubmit(payload);
+    if (!saved) {
+      return;
+    }
+
     setDescription('');
     setDetails('');
     setCategory('');
     setCustomName('');
+    setMedicineName('');
+    setMedicineQuantity('2');
   }
 
   return (
@@ -43,16 +62,42 @@ export default function LogForm({ type, onSubmit }) {
           />
         </label>
       )}
-      <label>
-        Description
-        <input
-          type="text"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          placeholder="What happened?"
-          required
-        />
-      </label>
+      {isMedicine && (
+        <div className="medicine-fields">
+          <label>
+            Medicine type
+            <select value={medicineName} onChange={e => setMedicineName(e.target.value)}>
+              <option value="">No medicine type selected</option>
+              {medicineTypes.map(medicine => (
+                <option key={medicine} value={medicine}>{medicine}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Quantity
+            <input
+              type="number"
+              min="1"
+              step="1"
+              value={medicineQuantity}
+              onChange={e => setMedicineQuantity(e.target.value)}
+              required
+            />
+          </label>
+        </div>
+      )}
+      {!isMedicine && (
+        <label>
+          Description
+          <input
+            type="text"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            placeholder="What happened?"
+            required
+          />
+        </label>
+      )}
       <label>
         Details
         <textarea

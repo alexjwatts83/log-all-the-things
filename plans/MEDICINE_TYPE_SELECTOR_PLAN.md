@@ -20,6 +20,7 @@ persist both values in the API, and show them in recent log entries.
 - Persist the selected medicine as its own field rather than placing it in description, details,
   or category.
 - Persist the Medicine quantity as its own numeric field.
+- Derive the Medicine description from the selected medicine type, falling back to `Medicine`.
 - Return the medicine value from the API and display it in the recent-log list.
 - Keep existing Food and Custom log behavior unchanged.
 - Preserve existing SQLite data when the schema is updated.
@@ -56,6 +57,7 @@ For entries with `TypeId == 1` (Medicine):
 - Return `400 Bad Request` for an unsupported non-empty value.
 - `MedicineQuantity` defaults to `2` when omitted by a Medicine request.
 - Reject Medicine quantities below `1` or values that are not whole numbers.
+- Replace `Description` with the canonical medicine name, or `Medicine` when no type is selected.
 
 For Food and Custom entries, ignore or clear medicine-specific values before persistence.
 
@@ -80,6 +82,8 @@ Also render a numeric input labelled **Quantity**:
 ```
 
 The quantity defaults to `2` whenever the form starts a new Medicine entry.
+
+Hide the Description input for Medicine logs. Food and Custom logs continue to require it.
 
 Default option:
 
@@ -137,63 +141,66 @@ schema update (smallest change)**.
 
 ### Phase 1 - Data and API
 
-- [ ] Choose the SQLite upgrade strategy.
-- [ ] Back up or copy an existing `logs.db` for upgrade testing.
-- [ ] Add nullable `MedicineName` to `Models/LogEntry.cs`.
-- [ ] Add nullable `MedicineQuantity` to `Models/LogEntry.cs`.
-- [ ] Add a central supported-medicine allowlist in the API.
-- [ ] Validate `MedicineName` when `TypeId == 1`.
-- [ ] Default a missing Medicine quantity to `2`.
-- [ ] Validate that a Medicine quantity is a positive whole number.
-- [ ] Clear medicine-specific values for Food and Custom entries.
-- [ ] Normalize accepted values to their canonical display spelling.
-- [ ] Update the SQLite schema without deleting existing data.
-- [ ] Confirm fresh database creation still seeds Medicine, Food, and Custom types.
+- [x] Choose the SQLite upgrade strategy (idempotent startup schema update).
+- [x] Back up or copy an existing `logs.db` for upgrade testing.
+- [x] Add nullable `MedicineName` to `Models/LogEntry.cs`.
+- [x] Add nullable `MedicineQuantity` to `Models/LogEntry.cs`.
+- [x] Add a central supported-medicine allowlist in the API.
+- [x] Validate `MedicineName` when `TypeId == 1`.
+- [x] Default a missing Medicine quantity to `2`.
+- [x] Validate that a Medicine quantity is a positive whole number.
+- [x] Clear medicine-specific values for Food and Custom entries.
+- [x] Normalize accepted values to their canonical display spelling.
+- [x] Update the SQLite schema without deleting existing data.
+- [x] Confirm fresh database creation still seeds Medicine, Food, and Custom types.
 
 ### Phase 2 - Frontend form
 
-- [ ] Add the supported medicine options in one named frontend constant.
-- [ ] Add `medicineName` state to `LogForm.jsx`.
-- [ ] Add `medicineQuantity` state with an initial value of `2`.
-- [ ] Render the **Medicine type** selector only for Medicine logs.
-- [ ] Include a default **No medicine type selected** option.
-- [ ] Keep the selector optional for Medicine submissions.
-- [ ] Render a Medicine-only numeric **Quantity** input with minimum `1` and step `1`.
-- [ ] Include `medicineName` in the form payload.
-- [ ] Include `medicineQuantity` in the form payload.
-- [ ] Reset the medicine selection and quantity (`2`) after submission.
-- [ ] Add `MedicineName` to the request body in `api.js`.
-- [ ] Add `MedicineQuantity` to the request body in `api.js`.
-- [ ] Preserve Food and Custom payload behavior.
+- [x] Add the supported medicine options in one named frontend constant.
+- [x] Add `medicineName` state to `LogForm.jsx`.
+- [x] Add `medicineQuantity` state with an initial value of `2`.
+- [x] Render the **Medicine type** selector only for Medicine logs.
+- [x] Include a default **No medicine type selected** option.
+- [x] Keep the selector optional for Medicine submissions.
+- [x] Render a Medicine-only numeric **Quantity** input with minimum `1` and step `1`.
+- [x] Include `medicineName` in the form payload.
+- [x] Include `medicineQuantity` in the form payload.
+- [x] Reset the medicine selection and quantity (`2`) after submission.
+- [x] Add `MedicineName` to the request body in `api.js`.
+- [x] Add `MedicineQuantity` to the request body in `api.js`.
+- [x] Preserve Food and Custom payload behavior.
+- [x] Hide Description for Medicine while keeping it required for Food and Custom.
 
 ### Phase 3 - Log display
 
-- [ ] Display the selected medicine and quantity on Medicine log cards.
-- [ ] Provide a sensible fallback for historical Medicine rows with no medicine value.
-- [ ] Provide a sensible fallback for historical Medicine rows with no quantity.
-- [ ] Confirm category and custom-name labels still display for other log types.
+- [x] Display the selected medicine and quantity on Medicine log cards.
+- [x] Provide a sensible fallback for historical Medicine rows with no medicine value.
+- [x] Provide a sensible fallback for historical Medicine rows with no quantity.
+- [x] Confirm category and custom-name labels still display for other log types.
 
 ### Phase 4 - Documentation
 
-- [ ] Update the API README model and POST examples with `medicineName` and `medicineQuantity`.
-- [ ] Update the web README with Medicine selector behavior and option maintenance.
-- [ ] Document how to add another supported medicine in both API and frontend lists.
+- [x] Update the API README model and POST examples with `medicineName` and `medicineQuantity`.
+- [x] Update the web README with Medicine selector behavior and option maintenance.
+- [x] Document how to add another supported medicine in both API and frontend lists.
 
 ### Phase 5 - Validation
 
-- [ ] Build the API project.
-- [ ] Build the web project.
-- [ ] Start both services through the Dev Launcher.
-- [ ] Create a Panadol Extra entry and verify it persists after refresh.
-- [ ] Create a Panadol Rapid entry and verify it persists after refresh.
-- [ ] Verify the Medicine quantity initially displays `2`.
-- [ ] Create a Medicine entry with a quantity other than `2` and verify it persists.
-- [ ] Create a Medicine entry without selecting a medicine type and verify it succeeds.
-- [ ] Verify the API rejects an unsupported medicine value.
-- [ ] Verify the API rejects zero, negative, and non-whole Medicine quantities.
-- [ ] Create Food and Custom entries to check for regressions.
-- [ ] Upgrade an existing SQLite database and verify old entries remain readable.
-- [ ] Create a fresh SQLite database and verify startup and seed data.
+- [x] Build the API project.
+- [x] Build the web project.
+- [x] Start both services through the Dev Launcher.
+- [x] Create a Panadol Extra entry and verify it persists after refresh.
+- [x] Create a Panadol Rapid entry and verify it persists after refresh.
+- [x] Verify the Medicine quantity initially displays `2`.
+- [x] Create a Medicine entry with a quantity other than `2` and verify it persists.
+- [x] Create a Medicine entry without selecting a medicine type and verify it succeeds.
+- [x] Verify Medicine derives its description from the selected type or falls back to `Medicine`.
+- [x] Verify Food and Custom still require a description.
+- [x] Verify the API rejects an unsupported medicine value.
+- [x] Verify the API rejects zero, negative, and fractional Medicine quantities.
+- [x] Create Food and Custom entries to check medicine-field clearing and regressions.
+- [x] Upgrade an existing SQLite database and verify old entries remain readable.
+- [x] Create a fresh SQLite database and verify startup and seed data.
 
 ---
 
@@ -204,7 +211,6 @@ schema update (smallest change)**.
   "typeId": 1,
   "medicineName": "Panadol Extra",
   "medicineQuantity": 2,
-  "description": "Took two tablets",
   "details": "With water",
   "category": "Headache",
   "customName": null

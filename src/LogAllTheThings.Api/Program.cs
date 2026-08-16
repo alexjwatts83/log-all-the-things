@@ -26,6 +26,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<LogsDbContext>();
     db.Database.EnsureCreated();
+    DatabaseSchemaUpdater.AddMedicineColumns(db);
     // Seed default log types if none exist
     if (!db.LogTypes.Any())
     {

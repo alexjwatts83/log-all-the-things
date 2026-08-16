@@ -17,6 +17,7 @@ body {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -80,12 +81,26 @@ header p {
 }
 
 .log-form input,
+.log-form select,
 .log-form textarea {
   width: 100%;
   border: 1px solid #cbd5e1;
   border-radius: 0.75rem;
   padding: 0.85rem 1rem;
   background: #f8fafc;
+}
+
+.medicine-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.3fr);
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .medicine-fields {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }
 
 .log-form button {

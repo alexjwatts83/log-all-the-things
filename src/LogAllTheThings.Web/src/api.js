@@ -22,6 +22,8 @@ export async function createLog(log) {
     Details: log.details ?? null,
     Category: log.category ?? null,
     CustomName: log.customName ?? null,
+    MedicineName: log.medicineName ?? null,
+    MedicineQuantity: log.medicineQuantity ?? null,
   };
 
   const response = await fetch(baseUrl, {

@@ -31,9 +31,38 @@ namespace LogAllTheThings.Api.Controllers
         [HttpPost]
         public ActionResult<LogEntry> Post([FromBody] LogEntry entry)
         {
-            if (entry is null || string.IsNullOrWhiteSpace(entry.Description))
+            if (entry is null)
             {
-                return BadRequest(new { error = "Description is required." });
+                return BadRequest(new { error = "Log entry is required." });
+            }
+
+            if (entry.TypeId == 1)
+            {
+                if (!string.IsNullOrWhiteSpace(entry.MedicineName))
+                {
+                    entry.MedicineName = SupportedMedicines.FindCanonicalName(entry.MedicineName);
+                    if (entry.MedicineName is null)
+                    {
+                        return BadRequest(new { error = "Unsupported medicine type." });
+                    }
+                }
+
+                entry.Description = entry.MedicineName ?? "Medicine";
+                entry.MedicineQuantity ??= 2;
+                if (entry.MedicineQuantity < 1)
+                {
+                    return BadRequest(new { error = "Medicine quantity must be a positive whole number." });
+                }
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(entry.Description))
+                {
+                    return BadRequest(new { error = "Description is required." });
+                }
+
+                entry.MedicineName = null;
+                entry.MedicineQuantity = null;
             }
 
             entry.Id = Guid.NewGuid();

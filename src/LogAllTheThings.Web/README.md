@@ -58,7 +58,19 @@ The UI currently provides three fixed log types, mapped to API type IDs in `src/
 | Food | 2 |
 | Custom | 3 |
 
-All entries require a description. Details and category are optional. Custom entries also support an optional event name.
+Food and Custom entries require a description. Details and category are optional. Custom entries
+also support an optional event name.
+
+Selecting **Medicine** reveals:
+
+- An optional **Medicine type** selector with Panadol Extra and Panadol Rapid.
+- A positive whole-number **Quantity** field that defaults to `2`.
+
+Medicine does not show a description field. The selected medicine type becomes the description;
+when no type is selected, the description is `Medicine`.
+
+To add another medicine, update `medicineTypes` in `src/components/LogForm.jsx` and
+`SupportedMedicines.Names` in the API. The API allowlist remains the source of validation truth.
 
 ## Scripts
 

@@ -31,8 +31,11 @@ export default function App() {
     try {
       const created = await createLog(entry);
       setLogs(prev => [created, ...prev]);
+      setError('');
+      return true;
     } catch (err) {
       setError('Unable to save log.');
+      return false;
     }
   }
 

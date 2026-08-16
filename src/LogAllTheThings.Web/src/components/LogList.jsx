@@ -14,6 +14,9 @@ export default function LogList({ logs }) {
     <div className="log-list">
       {logs.map(log => {
         const typeName = log.type?.name ?? log.type?.Name ?? log.type ?? typeNameFromId(log.typeId ?? log.typeId);
+        const metadata = typeName === 'Medicine'
+          ? `${log.medicineName || 'Medicine'}${log.medicineQuantity ? ` x${log.medicineQuantity}` : ''}`
+          : log.category || log.customName || 'General';
         return (
           <article key={log.id} className="log-card">
             <header>
@@ -21,7 +24,7 @@ export default function LogList({ logs }) {
                 <strong>{typeName}</strong>
                 <span>{new Date(log.timestamp).toLocaleString()}</span>
               </div>
-              <div>{log.category || log.customName || 'General'}</div>
+              <div>{metadata}</div>
             </header>
             <p>{log.description}</p>
             {log.details && <pre>{log.details}</pre>}
