@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { CheckCircle2, X } from 'lucide-react';
 import { fetchLogs, createLog, deleteLog, updateLog } from './api';
 import Dashboard from './components/dashboard/Dashboard';
 import LogForm from './components/LogForm';
@@ -15,10 +16,17 @@ export default function App() {
   const [activeView, setActiveView] = useState('dashboard');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [toast, setToast] = useState('');
 
   useEffect(() => {
     loadLogs();
   }, []);
+
+  useEffect(() => {
+    if (!toast) return undefined;
+    const timeoutId = globalThis.setTimeout(() => setToast(''), 3000);
+    return () => globalThis.clearTimeout(timeoutId);
+  }, [toast]);
 
   async function loadLogs() {
     setLoading(true);
@@ -39,6 +47,7 @@ export default function App() {
       const created = await createLog(entry);
       setLogs(prev => sortLogsByTimestamp([created, ...prev]));
       setError('');
+      setToast(`${entry.type} log saved`);
       return true;
     } catch (err) {
       setError('Unable to save log.');
@@ -114,6 +123,15 @@ export default function App() {
           )}
         </div>
       </main>
+      {toast && (
+        <div className="success-toast" role="status" aria-live="polite">
+          <CheckCircle2 size={20} aria-hidden="true" />
+          <span>{toast}</span>
+          <button type="button" onClick={() => setToast('')} aria-label="Dismiss notification" title="Dismiss">
+            <X size={18} aria-hidden="true" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -30,6 +30,16 @@ describe('dashboard metrics', () => {
     });
   });
 
+  it('counts active days from custom event timestamps instead of the current date', () => {
+    const customDatedLogs = [
+      { typeId: 1, timestamp: new Date(2026, 7, 3, 9).toISOString(), medicineQuantity: 2 },
+      { typeId: 2, timestamp: new Date(2026, 7, 3, 18).toISOString() },
+      { typeId: 3, timestamp: new Date(2026, 7, 7, 12).toISOString() },
+    ];
+
+    expect(buildSummaryMetrics(customDatedLogs).activeDays).toBe(2);
+  });
+
   it('zero-fills fixed ranges and groups long histories by week', () => {
     expect(buildDailySeries(logs.slice(0, 2), '7', now)).toHaveLength(7);
     expect(buildDailySeries([logs[0], { typeId: 2, timestamp: new Date(2026, 4, 1).toISOString() }], 'all', now)).toHaveLength(2);

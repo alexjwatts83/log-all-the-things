@@ -158,6 +158,22 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .dashboard-empty p { color: #63717a; }
 .empty-state { margin: 0; padding: 1.5rem 0; color: #63717a; }
 .error-message { margin-bottom: 1rem; padding: 0.9rem; border: 1px solid #d9a6a6; background: #fff1f1; color: #8f292d; }
+.success-toast {
+  position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 20;
+  display: flex; align-items: center; gap: 0.65rem; min-width: 16rem;
+  padding: 0.85rem 0.9rem; border: 1px solid #7ca9a2; border-radius: 6px;
+  background: #173f3b; color: #fff; box-shadow: 0 8px 24px rgba(23, 33, 43, 0.22);
+  animation: toast-enter 180ms ease-out;
+}
+.success-toast span { flex: 1; font-weight: 700; }
+.success-toast button {
+  display: grid; place-items: center; width: 2rem; height: 2rem; padding: 0;
+  border: 0; background: transparent; color: #fff; cursor: pointer;
+}
+@keyframes toast-enter {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 @media (max-width: 760px) {
   .app-shell { padding-top: 1rem; }
@@ -173,6 +189,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   .activity-plot { height: 210px; gap: 2px; }
   .medicine-fields { grid-template-columns: 1fr; gap: 0; }
   .log-card header { flex-direction: column; gap: 0.4rem; }
+  .success-toast { right: 1rem; bottom: 1rem; left: 1rem; min-width: 0; }
 }
 
 @media (max-width: 430px) {
