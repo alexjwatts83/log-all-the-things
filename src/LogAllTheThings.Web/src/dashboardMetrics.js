@@ -16,6 +16,20 @@ function validTimestamp(log) {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
+export function formatDateTimeLocal(dateInput) {
+  const date = dateInput ? new Date(dateInput) : new Date();
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+  const pad = num => String(num).padStart(2, '0');
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 export function filterLogsByRange(logs, range, now = new Date()) {
   if (range === 'all') {
     return logs.filter(validTimestamp);

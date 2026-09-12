@@ -111,6 +111,57 @@ public sealed class ProcessSupervisor : IDisposable
         }
     }
 
+    public async Task ForceStopAsync(ServiceDefinition definition)
+    {
+        SupervisedProcess? supervised;
+        lock (_sync)
+        {
+            if (_processes.TryGetValue(definition.Id, out supervised) && supervised.IsActive)
+            {
+                supervised.StopRequested = true;
+                Log(definition.Id, false, $"Force stopping process tree for PID {supervised.ProcessId}.");
+                StateChanged?.Invoke(definition.Id, ServiceState.Stopping, supervised.ProcessId);
+            }
+            else
+            {
+                supervised = null;
+            }
+        }
+
+        if (supervised is not null)
+        {
+            try
+            {
+                supervised.Process.Kill(entireProcessTree: true);
+                await supervised.Process.WaitForExitAsync();
+            }
+            catch (Exception exception) when (exception is InvalidOperationException or ObjectDisposedException)
+            {
+                Log(definition.Id, false, $"Process was already stopped: {exception.Message}");
+            }
+        }
+
+        if (PortInspector.IsListening(definition.Port))
+        {
+            Log(definition.Id, false, $"Force freeing port {definition.Port}.");
+            PortInspector.FreePort(definition.Port);
+
+            for (var i = 0; i < 10 && PortInspector.IsListening(definition.Port); i++)
+            {
+                await Task.Delay(100);
+            }
+        }
+
+        StateChanged?.Invoke(definition.Id, ServiceState.Stopped, null);
+    }
+
+    public async Task ForceRestartAsync(ServiceDefinition definition)
+    {
+        Log(definition.Id, false, $"Force restart requested for {definition.Name}.");
+        await ForceStopAsync(definition);
+        await StartAsync(definition);
+    }
+
     public void Dispose()
     {
         SupervisedProcess[] processes;

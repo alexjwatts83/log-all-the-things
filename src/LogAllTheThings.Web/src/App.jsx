@@ -6,6 +6,10 @@ import LogForm from './components/LogForm';
 
 const defaultTypes = ['Medicine', 'Food', 'Custom'];
 
+function sortLogsByTimestamp(logList) {
+  return [...logList].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+}
+
 export default function App() {
   const [logs, setLogs] = useState([]);
   const [selectedType, setSelectedType] = useState('Medicine');
@@ -21,7 +25,7 @@ export default function App() {
     setLoading(true);
     try {
       const entries = await fetchLogs();
-      setLogs(entries);
+      setLogs(sortLogsByTimestamp(entries));
       if (!entries.length) setActiveView('add');
       setError('');
     } catch (err) {
@@ -34,7 +38,7 @@ export default function App() {
   async function handleCreate(entry) {
     try {
       const created = await createLog(entry);
-      setLogs(prev => [created, ...prev]);
+      setLogs(prev => sortLogsByTimestamp([created, ...prev]));
       setError('');
       return true;
     } catch (err) {
@@ -46,7 +50,7 @@ export default function App() {
   async function handleUpdate(id, entry) {
     try {
       const updated = await updateLog(id, entry);
-      setLogs(current => current.map(log => log.id === id ? updated : log));
+      setLogs(current => sortLogsByTimestamp(current.map(log => log.id === id ? updated : log)));
       setError('');
       return true;
     } catch (err) {
@@ -81,7 +85,6 @@ export default function App() {
         <Dashboard logs={logs} loading={loading} error={error} onRetry={loadLogs} onAddLog={() => setActiveView('add')} onUpdate={handleUpdate} onDelete={handleDelete} />
       ) : (
         <main className="add-log-view">
-          <div className="view-heading"><p className="eyebrow">New entry</p><h1>Add a log</h1></div>
           {error && <div className="error-message" role="alert">{error}</div>}
           <section className="controls">
             <div className="tabs" aria-label="Log type">

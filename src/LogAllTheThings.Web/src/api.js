@@ -16,6 +16,7 @@ function toRequestBody(log) {
     CustomName: log.customName ?? null,
     MedicineName: log.medicineName ?? null,
     MedicineQuantity: log.medicineQuantity ?? null,
+    Timestamp: log.timestamp ? new Date(log.timestamp).toISOString() : null,
   };
 }
 

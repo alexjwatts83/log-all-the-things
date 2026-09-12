@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { formatDateTimeLocal } from '../dashboardMetrics';
 import { medicineTypes } from '../medicineTypes';
 
 export default function LogForm({ type, onSubmit }) {
@@ -8,6 +9,8 @@ export default function LogForm({ type, onSubmit }) {
   const [customName, setCustomName] = useState('');
   const [medicineName, setMedicineName] = useState(medicineTypes[0]);
   const [medicineQuantity, setMedicineQuantity] = useState('2');
+  const [showCustomDate, setShowCustomDate] = useState(false);
+  const [timestamp, setTimestamp] = useState('');
 
   const isCustom = type === 'Custom';
   const isMedicine = type === 'Medicine';
@@ -15,6 +18,8 @@ export default function LogForm({ type, onSubmit }) {
   useEffect(() => {
     setMedicineName(medicineTypes[0]);
     setMedicineQuantity('2');
+    setShowCustomDate(false);
+    setTimestamp('');
   }, [type]);
 
   const payload = useMemo(() => ({
@@ -25,7 +30,8 @@ export default function LogForm({ type, onSubmit }) {
     customName: customName || undefined,
     medicineName: isMedicine ? medicineName : undefined,
     medicineQuantity: isMedicine ? Number(medicineQuantity) : undefined,
-  }), [type, description, details, category, customName, isMedicine, medicineName, medicineQuantity]);
+    timestamp: showCustomDate && timestamp ? new Date(timestamp).toISOString() : undefined,
+  }), [type, description, details, category, customName, isMedicine, medicineName, medicineQuantity, showCustomDate, timestamp]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -45,6 +51,18 @@ export default function LogForm({ type, onSubmit }) {
     setCustomName('');
     setMedicineName(medicineTypes[0]);
     setMedicineQuantity('2');
+    setShowCustomDate(false);
+    setTimestamp('');
+  }
+
+  function handleDateModeChange(mode) {
+    if (mode === 'now') {
+      setShowCustomDate(false);
+      setTimestamp('');
+    } else {
+      setShowCustomDate(true);
+      setTimestamp(formatDateTimeLocal());
+    }
   }
 
   return (
@@ -114,6 +132,38 @@ export default function LogForm({ type, onSubmit }) {
           placeholder="Optional category or tag"
         />
       </label>
+      <div className="date-mode-toggle">
+        <label>Time</label>
+        <div className="segmented-control" role="group" aria-label="Log timestamp mode">
+          <button
+            type="button"
+            aria-pressed={!showCustomDate}
+            onClick={() => handleDateModeChange('now')}
+          >
+            Now
+          </button>
+          <button
+            type="button"
+            aria-pressed={showCustomDate}
+            onClick={() => handleDateModeChange('custom')}
+          >
+            Custom
+          </button>
+        </div>
+      </div>
+      {showCustomDate && (
+        <div className="custom-date-field">
+          <label>
+            Date and time
+            <input
+              type="datetime-local"
+              value={timestamp}
+              onChange={e => setTimestamp(e.target.value)}
+              required
+            />
+          </label>
+        </div>
+      )}
       <button type="submit">Save {type} log</button>
     </form>
   );

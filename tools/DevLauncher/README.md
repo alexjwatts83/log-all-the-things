@@ -35,7 +35,8 @@ dotnet build .\tools\DevLauncher\DevLauncher.csproj
 - **Start all** starts the API followed by the web frontend.
 - **Stop all** stops both services and their child processes.
 - **Restart all** restarts both services.
-- Each service card also has its own **Start**, **Stop**, and **Restart** controls.
+- **Force restart all** force stops any running processes and port listeners, then starts both services.
+- Each service card also has its own **Start**, **Stop**, **Restart**, and **Force restart** controls.
 - **Auto-scroll** keeps the newest process output visible.
 - **Open log file** opens the persistent launcher log.
 - **Clear** removes the currently displayed log lines.
@@ -75,17 +76,23 @@ Install Node.js and restart VS Code so npm is available on `PATH`.
 
 ### A port is already in use
 
-Stop the existing listener with the repository script:
+Use the **Force restart** or **Force restart all** controls in the launcher, or stop the existing listener with the repository script:
 
 ```powershell
 .\scripts\stop.ps1
 ```
 
-Then start the services again from the launcher.
+Or run the force restart script:
+
+```powershell
+.\scripts\restart.ps1
+```
+
+Then start the services again.
 
 ## Current limitations
 
 - Windows-only because the launcher uses WPF.
 - The App tab requires the Microsoft Edge WebView2 Runtime (included with current Windows releases).
 - The on-screen log is capped at 5,000 lines; the complete persistent log remains available on disk.
-- Log filtering, saving logs, uptime display, and in-app port recovery are planned but not implemented yet.
+- Log filtering, saving logs, and uptime display are planned but not implemented yet.

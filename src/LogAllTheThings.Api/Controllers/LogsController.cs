@@ -71,6 +71,10 @@ namespace LogAllTheThings.Api.Controllers
             entry.CustomName = update.CustomName;
             entry.MedicineName = update.MedicineName;
             entry.MedicineQuantity = update.MedicineQuantity;
+            if (update.Timestamp != default)
+            {
+                entry.Timestamp = update.Timestamp;
+            }
             _db.SaveChanges();
             return Ok(entry);
         }

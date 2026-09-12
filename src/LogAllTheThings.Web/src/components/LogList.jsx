@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { formatDateTimeLocal } from '../dashboardMetrics';
 import { medicineTypes } from '../medicineTypes';
 
 export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No logs yet. Add a medicine, food, or custom event log.' }) {
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState(null);
   const [busyId, setBusyId] = useState(null);
+  const [showCustomDate, setShowCustomDate] = useState(false);
 
   if (!logs.length) {
     return <p className="empty-state">{emptyMessage}</p>;
@@ -19,6 +21,7 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
 
   function beginEdit(log) {
     setEditingId(log.id);
+    setShowCustomDate(false);
     setDraft({
       typeId: log.typeId,
       description: log.description ?? '',
@@ -27,6 +30,7 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
       customName: log.customName ?? '',
       medicineName: log.medicineName ?? medicineTypes[0],
       medicineQuantity: String(log.medicineQuantity ?? 2),
+      timestamp: formatDateTimeLocal(log.timestamp),
     });
   }
 
@@ -43,11 +47,13 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
     const saved = await onUpdate(log.id, {
       ...draft,
       medicineQuantity: isMedicine ? quantity : undefined,
+      timestamp: showCustomDate && draft.timestamp ? new Date(draft.timestamp).toISOString() : log.timestamp,
     });
     setBusyId(null);
     if (saved) {
       setEditingId(null);
       setDraft(null);
+      setShowCustomDate(false);
     }
   }
 
@@ -114,6 +120,36 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
                     <input value={draft.customName}
                            onChange={event => setDraft(current => ({ ...current, customName: event.target.value }))} />
                   </label>
+                )}
+                <div className="date-mode-toggle">
+                  <label>Time</label>
+                  <div className="segmented-control" role="group" aria-label="Log timestamp mode">
+                    <button
+                      type="button"
+                      aria-pressed={!showCustomDate}
+                      onClick={() => setShowCustomDate(false)}
+                    >
+                      Now
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={showCustomDate}
+                      onClick={() => setShowCustomDate(true)}
+                    >
+                      Custom
+                    </button>
+                  </div>
+                </div>
+                {showCustomDate && (
+                  <div className="custom-date-field">
+                    <label>
+                      Date and time
+                      <input type="datetime-local"
+                             value={draft.timestamp}
+                             onChange={event => setDraft(current => ({ ...current, timestamp: event.target.value }))}
+                             required />
+                    </label>
+                  </div>
                 )}
                 <label>
                   Details

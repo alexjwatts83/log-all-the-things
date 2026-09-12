@@ -3,13 +3,21 @@
     Starts the LogAllTheThings API (http://localhost:5000) and the Vite web app.
 .PARAMETER SkipInstall
     Skip `npm install` for the web app.
+.PARAMETER Force
+    Force stop any existing processes listening on ports 5000 or 5173 before starting.
 #>
 [CmdletBinding()]
 param(
-    [switch]$SkipInstall
+    [switch]$SkipInstall,
+    [switch]$Force
 )
 
 $ErrorActionPreference = 'Stop'
+
+if ($Force) {
+    Write-Host 'Force stopping existing listeners on ports 5000 and 5173...' -ForegroundColor Cyan
+    & (Join-Path $PSScriptRoot 'stop.ps1')
+}
 
 $root = Split-Path -Parent $PSScriptRoot
 $apiPath = Join-Path $root 'src/LogAllTheThings.Api'

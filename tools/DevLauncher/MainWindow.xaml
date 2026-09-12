@@ -41,7 +41,8 @@
             <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
                 <Button Command="{Binding StartAllCommand}" Content="Start all" />
                 <Button Command="{Binding StopAllCommand}" Background="#B64242" Content="Stop all" />
-                <Button Command="{Binding RestartAllCommand}" Background="#59636F" Content="Restart all" Margin="0" />
+                <Button Command="{Binding RestartAllCommand}" Background="#59636F" Content="Restart all" />
+                <Button Command="{Binding ForceRestartAllCommand}" Background="#C0392B" Content="Force restart all" Margin="0" />
             </StackPanel>
         </DockPanel>
 
@@ -85,7 +86,8 @@
                             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <Button Command="{Binding StartCommand}" Content="Start" />
                                 <Button Command="{Binding StopCommand}" Background="#B64242" Content="Stop" />
-                                <Button Command="{Binding RestartCommand}" Background="#59636F" Content="Restart" Margin="0" />
+                                <Button Command="{Binding RestartCommand}" Background="#59636F" Content="Restart" />
+                                <Button Command="{Binding ForceRestartCommand}" Background="#C0392B" Content="Force restart" Margin="0" />
                             </StackPanel>
                         </Grid>
                     </Border>

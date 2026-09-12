@@ -13,12 +13,14 @@ public sealed class ServiceViewModel : INotifyPropertyChanged
         ServiceDefinition definition,
         Func<ServiceDefinition, Task> start,
         Func<string, Task> stop,
-        Func<ServiceDefinition, Task> restart)
+        Func<ServiceDefinition, Task> restart,
+        Func<ServiceDefinition, Task> forceRestart)
     {
         Definition = definition;
         StartCommand = new AsyncCommand(() => start(definition), () => State is ServiceState.Stopped or ServiceState.Crashed);
         StopCommand = new AsyncCommand(() => stop(definition.Id), () => State is ServiceState.Starting or ServiceState.Running);
         RestartCommand = new AsyncCommand(() => restart(definition), () => State is ServiceState.Starting or ServiceState.Running or ServiceState.Crashed);
+        ForceRestartCommand = new AsyncCommand(() => forceRestart(definition));
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -29,6 +31,7 @@ public sealed class ServiceViewModel : INotifyPropertyChanged
     public AsyncCommand StartCommand { get; }
     public AsyncCommand StopCommand { get; }
     public AsyncCommand RestartCommand { get; }
+    public AsyncCommand ForceRestartCommand { get; }
 
     public ServiceState State
     {
@@ -73,6 +76,7 @@ public sealed class ServiceViewModel : INotifyPropertyChanged
         StartCommand.RaiseCanExecuteChanged();
         StopCommand.RaiseCanExecuteChanged();
         RestartCommand.RaiseCanExecuteChanged();
+        ForceRestartCommand.RaiseCanExecuteChanged();
     }
 
     private void OnPropertyChanged([CallerMemberName] string? name = null) =>

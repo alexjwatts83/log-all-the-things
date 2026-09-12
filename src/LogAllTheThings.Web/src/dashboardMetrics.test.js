@@ -5,6 +5,7 @@ import {
   buildSummaryMetrics,
   buildTypeBreakdown,
   filterLogsByRange,
+  formatDateTimeLocal,
 } from './dashboardMetrics';
 
 const now = new Date(2026, 8, 12, 12);
@@ -51,5 +52,11 @@ describe('dashboard metrics', () => {
     const invalid = { typeId: 1, timestamp: 'not-a-date', medicineQuantity: 4 };
     expect(filterLogsByRange([invalid], '30', now)).toEqual([]);
     expect(buildSummaryMetrics([invalid]).activeDays).toBe(0);
+  });
+
+  it('formats local datetime string for HTML datetime-local inputs', () => {
+    const date = new Date(2026, 8, 12, 14, 30);
+    expect(formatDateTimeLocal(date)).toBe('2026-09-12T14:30');
+    expect(formatDateTimeLocal('invalid')).toBe('');
   });
 });

@@ -20,11 +20,13 @@ public sealed class MainViewModel : IDisposable
                 definition,
                 StartAsync,
                 StopAsync,
-                RestartAsync)));
+                RestartAsync,
+                ForceRestartAsync)));
 
         StartAllCommand = new AsyncCommand(StartAllAsync);
         StopAllCommand = new AsyncCommand(StopAllAsync);
         RestartAllCommand = new AsyncCommand(RestartAllAsync);
+        ForceRestartAllCommand = new AsyncCommand(ForceRestartAllAsync);
         _supervisor.LogReceived += OnLogReceived;
         _supervisor.StateChanged += OnStateChanged;
     }
@@ -34,6 +36,7 @@ public sealed class MainViewModel : IDisposable
     public AsyncCommand StartAllCommand { get; }
     public AsyncCommand StopAllCommand { get; }
     public AsyncCommand RestartAllCommand { get; }
+    public AsyncCommand ForceRestartAllCommand { get; }
 
     public async Task StartAllAsync()
     {
@@ -66,17 +69,35 @@ public sealed class MainViewModel : IDisposable
 
     private Task StopAsync(string serviceId) => _supervisor.StopAsync(serviceId);
 
+    private Task ForceStopAsync(ServiceDefinition definition) => _supervisor.ForceStopAsync(definition);
+
     private async Task RestartAsync(ServiceDefinition definition)
     {
         await StopAsync(definition.Id);
         await StartAsync(definition);
     }
 
+    private Task ForceRestartAsync(ServiceDefinition definition) => _supervisor.ForceRestartAsync(definition);
+
     private async Task RestartAllAsync()
     {
         AddLauncherLog("Restart all requested.");
         await StopAllAsync();
         await StartAllAsync();
+    }
+
+    private async Task ForceRestartAllAsync()
+    {
+        AddLauncherLog("Force restart all requested.");
+        foreach (var service in Services.Reverse())
+        {
+            await ForceStopAsync(service.Definition);
+        }
+
+        foreach (var service in Services)
+        {
+            await StartAsync(service.Definition);
+        }
     }
 
     private void OnLogReceived(LogLine line) => Dispatch(() =>

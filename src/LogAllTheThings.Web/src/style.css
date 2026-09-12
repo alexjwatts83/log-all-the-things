@@ -127,6 +127,10 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .log-form > button { border: 0; border-radius: 5px; padding: 0.75rem 1rem; background: #0d756c; color: #fff; cursor: pointer; font-weight: 700; }
 .medicine-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.3fr); gap: 1rem; }
 .edit-log-form { display: grid; gap: 0.15rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #d5dde0; }
+.date-mode-toggle { display: grid; gap: 0.45rem; margin-bottom: 1rem; font-weight: 600; }
+.date-mode-toggle .segmented-control { width: fit-content; }
+.custom-date-field { margin-bottom: 1rem; }
+.custom-date-field label { margin-bottom: 0.35rem; }
 
 .dashboard-empty, .dashboard-loading { padding: 3rem 1.25rem; border: 1px dashed #a9b7bb; background: rgba(255, 255, 255, 0.55); text-align: center; }
 .dashboard-empty.compact { padding: 2rem 1rem; }
