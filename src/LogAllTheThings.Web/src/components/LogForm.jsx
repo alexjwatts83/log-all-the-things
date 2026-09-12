@@ -113,24 +113,6 @@ export default function LogForm({ type, onSubmit }) {
           />
         </label>
       )}
-      <label>
-        Details
-        <textarea
-          value={details}
-          onChange={e => setDetails(e.target.value)}
-          placeholder="Optional notes or dosage, food details, timing, etc."
-          rows="3"
-        />
-      </label>
-      <label>
-        Category
-        <input
-          type="text"
-          value={category}
-          onChange={e => setCategory(e.target.value)}
-          placeholder="Optional category or tag"
-        />
-      </label>
       <div className="date-mode-toggle">
         <label>Time</label>
         <div className="segmented-control" role="group" aria-label="Log timestamp mode">
@@ -163,6 +145,24 @@ export default function LogForm({ type, onSubmit }) {
           </label>
         </div>
       )}
+      <label>
+        Details
+        <textarea
+          value={details}
+          onChange={e => setDetails(e.target.value)}
+          placeholder="Optional notes or dosage, food details, timing, etc."
+          rows="3"
+        />
+      </label>
+      <label>
+        Category
+        <input
+          type="text"
+          value={category}
+          onChange={e => setCategory(e.target.value)}
+          placeholder="Optional category or tag"
+        />
+      </label>
       <button type="submit">Save {type} log</button>
     </form>
   );

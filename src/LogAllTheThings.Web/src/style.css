@@ -147,6 +147,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .medicine-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.3fr); gap: 1rem; }
 .edit-log-form { display: grid; gap: 0.15rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #d5dde0; }
 .date-mode-toggle { display: grid; gap: 0.45rem; margin-bottom: 1rem; font-weight: 600; }
+.date-mode-toggle > label { margin-bottom: 0; }
 .date-mode-toggle .segmented-control { width: fit-content; }
 .custom-date-field { margin-bottom: 1rem; }
 .custom-date-field label { margin-bottom: 0.35rem; }
