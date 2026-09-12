@@ -6,6 +6,7 @@ const typeMap = {
   Food: 2,
   Custom: 3,
   Car: 4,
+  Life: 5,
 };
 
 function toRequestBody(log) {
@@ -19,6 +20,8 @@ function toRequestBody(log) {
     MedicineQuantity: log.medicineQuantity ?? null,
     CarEventName: log.carEventName ?? null,
     CarCost: log.carCost ?? null,
+    LifeEventName: log.lifeEventName ?? null,
+    LifeCost: log.lifeCost ?? null,
     Timestamp: log.timestamp ? new Date(log.timestamp).toISOString() : null,
   };
 }

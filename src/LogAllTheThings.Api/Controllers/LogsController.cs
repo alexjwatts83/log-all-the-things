@@ -73,6 +73,8 @@ namespace LogAllTheThings.Api.Controllers
             entry.MedicineQuantity = update.MedicineQuantity;
             entry.CarEventName = update.CarEventName;
             entry.CarCost = update.CarCost;
+            entry.LifeEventName = update.LifeEventName;
+            entry.LifeCost = update.LifeCost;
             if (update.Timestamp != default)
             {
                 entry.Timestamp = update.Timestamp;
@@ -119,6 +121,8 @@ namespace LogAllTheThings.Api.Controllers
 
                 entry.CarEventName = null;
                 entry.CarCost = null;
+                entry.LifeEventName = null;
+                entry.LifeCost = null;
             }
             else if (entry.TypeId == 4)
             {
@@ -146,6 +150,37 @@ namespace LogAllTheThings.Api.Controllers
 
                 entry.MedicineName = null;
                 entry.MedicineQuantity = null;
+                entry.LifeEventName = null;
+                entry.LifeCost = null;
+            }
+            else if (entry.TypeId == 5)
+            {
+                if (string.IsNullOrWhiteSpace(entry.LifeEventName))
+                {
+                    return "Life event type is required.";
+                }
+
+                entry.LifeEventName = SupportedLifeEvents.FindCanonicalName(entry.LifeEventName);
+                if (entry.LifeEventName is null)
+                {
+                    return "Unsupported life event type.";
+                }
+
+                entry.Description = entry.LifeEventName;
+                if (entry.LifeCost is <= 0)
+                {
+                    return "Life cost must be greater than zero when provided.";
+                }
+
+                if (entry.LifeCost is not null && decimal.Round(entry.LifeCost.Value, 2) != entry.LifeCost.Value)
+                {
+                    return "Life cost must have no more than two decimal places.";
+                }
+
+                entry.MedicineName = null;
+                entry.MedicineQuantity = null;
+                entry.CarEventName = null;
+                entry.CarCost = null;
             }
             else
             {
@@ -158,6 +193,8 @@ namespace LogAllTheThings.Api.Controllers
                 entry.MedicineQuantity = null;
                 entry.CarEventName = null;
                 entry.CarCost = null;
+                entry.LifeEventName = null;
+                entry.LifeCost = null;
             }
 
             return null;

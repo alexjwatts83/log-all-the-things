@@ -27,6 +27,16 @@ public static class DatabaseSchemaUpdater
         {
             db.Database.ExecuteSqlRaw("ALTER TABLE LogEntries ADD COLUMN CarCost TEXT NULL");
         }
+
+        if (!columns.Contains("LifeEventName"))
+        {
+            db.Database.ExecuteSqlRaw("ALTER TABLE LogEntries ADD COLUMN LifeEventName TEXT NULL");
+        }
+
+        if (!columns.Contains("LifeCost"))
+        {
+            db.Database.ExecuteSqlRaw("ALTER TABLE LogEntries ADD COLUMN LifeCost TEXT NULL");
+        }
     }
 
     private static HashSet<string> GetColumns(LogsDbContext db)

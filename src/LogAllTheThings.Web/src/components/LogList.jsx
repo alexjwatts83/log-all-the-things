@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { carEventTypes } from '../carEventTypes';
+import { carEventTypes, defaultCarEventType } from '../carEventTypes';
 import { formatDateTimeLocal } from '../dashboardMetrics';
+import { lifeEventTypes } from '../lifeEventTypes';
 import { medicineTypes } from '../medicineTypes';
 
 const currencyFormatter = new Intl.NumberFormat(undefined, {
@@ -23,6 +24,7 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
     if (id === 2) return 'Food';
     if (id === 3) return 'Custom';
     if (id === 4) return 'Car';
+    if (id === 5) return 'Life';
     return 'General';
   };
 
@@ -37,8 +39,10 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
       customName: log.customName ?? '',
       medicineName: log.medicineName ?? medicineTypes[0],
       medicineQuantity: String(log.medicineQuantity ?? 2),
-      carEventName: log.carEventName ?? carEventTypes[0],
+      carEventName: log.carEventName ?? defaultCarEventType,
       carCost: String(log.carCost ?? ''),
+      lifeEventName: log.lifeEventName ?? lifeEventTypes[0],
+      lifeCost: String(log.lifeCost ?? ''),
       timestamp: formatDateTimeLocal(log.timestamp),
     });
   }
@@ -47,12 +51,15 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
     event.preventDefault();
     const isMedicine = log.typeId === 1;
     const isCar = log.typeId === 4;
+    const isLife = log.typeId === 5;
     const quantity = Number(draft.medicineQuantity);
     const cost = Number(draft.carCost);
     const validCost = /^\d+(\.\d{1,2})?$/.test(draft.carCost) && cost > 0;
-    if ((!isMedicine && !isCar && !draft.description.trim()) ||
+    const validLifeCost = !draft.lifeCost || (/^\d+(\.\d{1,2})?$/.test(draft.lifeCost) && Number(draft.lifeCost) > 0);
+    if ((!isMedicine && !isCar && !isLife && !draft.description.trim()) ||
       (isMedicine && (!draft.medicineName || !Number.isInteger(quantity) || quantity < 1)) ||
-      (isCar && (!draft.carEventName || !validCost))) {
+      (isCar && (!draft.carEventName || !validCost)) ||
+      (isLife && (!draft.lifeEventName || !validLifeCost))) {
       return;
     }
 
@@ -61,6 +68,7 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
       ...draft,
       medicineQuantity: isMedicine ? quantity : undefined,
       carCost: isCar ? cost : undefined,
+      lifeCost: isLife && draft.lifeCost ? Number(draft.lifeCost) : undefined,
       timestamp: showCustomDate && draft.timestamp ? new Date(draft.timestamp).toISOString() : log.timestamp,
     });
     setBusyId(null);
@@ -89,7 +97,9 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
           ? `${log.medicineName || 'Medicine'}${log.medicineQuantity ? ` x${log.medicineQuantity}` : ''}`
           : typeName === 'Car'
             ? `${log.carEventName || 'Car'} · ${currencyFormatter.format(Number(log.carCost ?? 0))}`
-            : log.category || log.customName || 'General';
+            : typeName === 'Life'
+              ? `${log.lifeEventName || 'Life'}${log.lifeCost != null ? ` · ${currencyFormatter.format(Number(log.lifeCost))}` : ''}`
+              : log.category || log.customName || 'General';
         return (
           <article key={log.id} className="log-card">
             <header>
@@ -139,6 +149,24 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
                       <input type="number" min="0.01" step="0.01" inputMode="decimal" value={draft.carCost}
                              onChange={event => setDraft(current => ({ ...current, carCost: event.target.value }))}
                              required />
+                    </label>
+                  </div>
+                ) : log.typeId === 5 ? (
+                  <div className="medicine-fields">
+                    <label>
+                      Life activity
+                      <select value={draft.lifeEventName}
+                              onChange={event => setDraft(current => ({ ...current, lifeEventName: event.target.value }))}
+                              required>
+                        {lifeEventTypes.map(lifeEvent => (
+                          <option key={lifeEvent} value={lifeEvent}>{lifeEvent}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      Cost (optional)
+                      <input type="number" min="0.01" step="0.01" inputMode="decimal" value={draft.lifeCost}
+                             onChange={event => setDraft(current => ({ ...current, lifeCost: event.target.value }))} />
                     </label>
                   </div>
                 ) : (

@@ -54,6 +54,15 @@ describe('dashboard metrics', () => {
     expect(breakdown.find(type => type.name === 'Car')).toMatchObject({ count: 1, percentage: 100 });
   });
 
+  it('includes life logs in dashboard series and type breakdowns', () => {
+    const lifeLog = { typeId: 5, timestamp: new Date(2026, 8, 12, 11).toISOString(), lifeEventName: 'Haircut' };
+    const series = buildDailySeries([lifeLog], '7', now);
+    const breakdown = buildTypeBreakdown([lifeLog]);
+
+    expect(series.find(day => day.Life === 1)).toBeTruthy();
+    expect(breakdown.find(type => type.name === 'Life')).toMatchObject({ count: 1, percentage: 100 });
+  });
+
   it('builds type percentages and preserves unknown types', () => {
     const result = buildTypeBreakdown([...logs.slice(0, 2), { typeId: 99, timestamp: logs[0].timestamp }]);
     expect(result.find(type => type.name === 'Medicine')).toMatchObject({ count: 1, percentage: 33 });

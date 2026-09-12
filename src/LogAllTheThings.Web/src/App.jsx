@@ -10,6 +10,7 @@ const defaultTypes = [
   { id: 2, name: 'Food' },
   { id: 3, name: 'Custom' },
   { id: 4, name: 'Car' },
+  { id: 5, name: 'Life' },
 ];
 
 function sortLogsByTimestamp(logList) {

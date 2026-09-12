@@ -27,22 +27,16 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<LogsDbContext>();
     db.Database.EnsureCreated();
     DatabaseSchemaUpdater.AddLogEntryColumns(db);
-    // Seed default log types if none exist
-    if (!db.LogTypes.Any())
-    {
-        db.LogTypes.AddRange(new[] {
-            new LogAllTheThings.Api.Models.LogType { Id = 1, Name = "Medicine" },
-            new LogAllTheThings.Api.Models.LogType { Id = 2, Name = "Food" },
-            new LogAllTheThings.Api.Models.LogType { Id = 3, Name = "Custom" },
-            new LogAllTheThings.Api.Models.LogType { Id = 4, Name = "Car" }
-        });
-        db.SaveChanges();
-    }
-    else if (!db.LogTypes.Any(type => type.Id == 4))
-    {
-        db.LogTypes.Add(new LogAllTheThings.Api.Models.LogType { Id = 4, Name = "Car" });
-        db.SaveChanges();
-    }
+    var defaultLogTypes = new[] {
+        new LogAllTheThings.Api.Models.LogType { Id = 1, Name = "Medicine" },
+        new LogAllTheThings.Api.Models.LogType { Id = 2, Name = "Food" },
+        new LogAllTheThings.Api.Models.LogType { Id = 3, Name = "Custom" },
+        new LogAllTheThings.Api.Models.LogType { Id = 4, Name = "Car" },
+        new LogAllTheThings.Api.Models.LogType { Id = 5, Name = "Life" }
+    };
+    var existingTypeIds = db.LogTypes.Select(type => type.Id).ToHashSet();
+    db.LogTypes.AddRange(defaultLogTypes.Where(type => !existingTypeIds.Contains(type.Id)));
+    db.SaveChanges();
 }
 
 if (app.Environment.IsDevelopment())

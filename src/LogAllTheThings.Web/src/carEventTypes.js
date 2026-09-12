@@ -6,3 +6,5 @@ export const carEventTypes = [
   'Insurance',
   'Misc',
 ];
+
+export const defaultCarEventType = 'Petrol';

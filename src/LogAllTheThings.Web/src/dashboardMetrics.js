@@ -74,7 +74,7 @@ export function buildSummaryMetrics(logs) {
 export function buildDailySeries(logs, range, now = new Date()) {
   const grouped = new Map();
   const addLog = (key, log) => {
-    const row = grouped.get(key) ?? { date: key, Medicine: 0, Food: 0, Custom: 0, Car: 0, Other: 0 };
+    const row = grouped.get(key) ?? { date: key, Medicine: 0, Food: 0, Custom: 0, Car: 0, Life: 0, Other: 0 };
     row[getLogType(log.typeId).name] += 1;
     grouped.set(key, row);
   };
@@ -106,7 +106,7 @@ export function buildDailySeries(logs, range, now = new Date()) {
       day.setDate(day.getDate() + index);
       const key = dateKey(day);
       if (!grouped.has(key)) {
-        grouped.set(key, { date: key, Medicine: 0, Food: 0, Custom: 0, Car: 0, Other: 0 });
+        grouped.set(key, { date: key, Medicine: 0, Food: 0, Custom: 0, Car: 0, Life: 0, Other: 0 });
       }
     }
   }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
-import { carEventTypes } from '../carEventTypes';
+import { carEventTypes, defaultCarEventType } from '../carEventTypes';
 import { formatDateTimeLocal } from '../dashboardMetrics';
+import { lifeEventTypes } from '../lifeEventTypes';
 import { medicineTypes } from '../medicineTypes';
 
 export default function LogForm({ type, onSubmit }) {
@@ -10,20 +11,25 @@ export default function LogForm({ type, onSubmit }) {
   const [customName, setCustomName] = useState('');
   const [medicineName, setMedicineName] = useState(medicineTypes[0]);
   const [medicineQuantity, setMedicineQuantity] = useState('2');
-  const [carEventName, setCarEventName] = useState(carEventTypes[0]);
+  const [carEventName, setCarEventName] = useState(defaultCarEventType);
   const [carCost, setCarCost] = useState('');
+  const [lifeEventName, setLifeEventName] = useState(lifeEventTypes[0]);
+  const [lifeCost, setLifeCost] = useState('');
   const [showCustomDate, setShowCustomDate] = useState(false);
   const [timestamp, setTimestamp] = useState('');
 
   const isCustom = type === 'Custom';
   const isMedicine = type === 'Medicine';
   const isCar = type === 'Car';
+  const isLife = type === 'Life';
 
   useEffect(() => {
     setMedicineName(medicineTypes[0]);
     setMedicineQuantity('2');
-    setCarEventName(carEventTypes[0]);
+    setCarEventName(defaultCarEventType);
     setCarCost('');
+    setLifeEventName(lifeEventTypes[0]);
+    setLifeCost('');
     setShowCustomDate(false);
     setTimestamp('');
   }, [type]);
@@ -38,17 +44,21 @@ export default function LogForm({ type, onSubmit }) {
     medicineQuantity: isMedicine ? Number(medicineQuantity) : undefined,
     carEventName: isCar ? carEventName : undefined,
     carCost: isCar ? Number(carCost) : undefined,
+    lifeEventName: isLife ? lifeEventName : undefined,
+    lifeCost: isLife && lifeCost ? Number(lifeCost) : undefined,
     timestamp: showCustomDate && timestamp ? new Date(timestamp).toISOString() : undefined,
-  }), [type, description, details, category, customName, isMedicine, medicineName, medicineQuantity, isCar, carEventName, carCost, showCustomDate, timestamp]);
+  }), [type, description, details, category, customName, isMedicine, medicineName, medicineQuantity, isCar, carEventName, carCost, isLife, lifeEventName, lifeCost, showCustomDate, timestamp]);
 
   async function handleSubmit(e) {
     e.preventDefault();
     const quantity = Number(medicineQuantity);
     const cost = Number(carCost);
     const validCost = /^\d+(\.\d{1,2})?$/.test(carCost) && cost > 0;
-    if ((!isMedicine && !isCar && !description.trim()) ||
+    const validLifeCost = !lifeCost || (/^\d+(\.\d{1,2})?$/.test(lifeCost) && Number(lifeCost) > 0);
+    if ((!isMedicine && !isCar && !isLife && !description.trim()) ||
       (isMedicine && (!medicineName || !Number.isInteger(quantity) || quantity < 1)) ||
-      (isCar && (!carEventName || !validCost))) {
+      (isCar && (!carEventName || !validCost)) ||
+      (isLife && (!lifeEventName || !validLifeCost))) {
       return;
     }
 
@@ -63,8 +73,10 @@ export default function LogForm({ type, onSubmit }) {
     setCustomName('');
     setMedicineName(medicineTypes[0]);
     setMedicineQuantity('2');
-    setCarEventName(carEventTypes[0]);
+    setCarEventName(defaultCarEventType);
     setCarCost('');
+    setLifeEventName(lifeEventTypes[0]);
+    setLifeCost('');
     setShowCustomDate(false);
     setTimestamp('');
   }
@@ -139,7 +151,30 @@ export default function LogForm({ type, onSubmit }) {
           </label>
         </div>
       )}
-      {!isMedicine && !isCar && (
+      {isLife && (
+        <div className="medicine-fields">
+          <label>
+            Life activity
+            <select value={lifeEventName} onChange={e => setLifeEventName(e.target.value)} required>
+              {lifeEventTypes.map(lifeEvent => (
+                <option key={lifeEvent} value={lifeEvent}>{lifeEvent}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Cost (optional)
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              inputMode="decimal"
+              value={lifeCost}
+              onChange={e => setLifeCost(e.target.value)}
+            />
+          </label>
+        </div>
+      )}
+      {!isMedicine && !isCar && !isLife && (
         <label>
           Description
           <input
