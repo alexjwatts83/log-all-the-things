@@ -3,6 +3,9 @@
 A React frontend and ASP.NET Core backend project for creating, editing, and deleting medicine,
 food, and custom event logs.
 
+The dashboard summarizes activity across 7, 30, or 90 days and all time, including total logs,
+medicine quantities, active days, activity trends, type distribution, and recent activity filters.
+
 ## Structure
 
 - `LogAllTheThings.sln` — Visual Studio solution containing the API project.
@@ -10,7 +13,7 @@ food, and custom event logs.
 - `src/LogAllTheThings.Web/` — React frontend built with Vite.
 - `tools/DevLauncher/` — WPF control panel for running the API and frontend locally.
 - `scripts/` — PowerShell scripts for starting, stopping, and packaging the application.
-- `plans/DASHBOARD_PLAN.md` — active implementation plan for the dashboard.
+- `plans/DASHBOARD_PLAN.md` — dashboard design and implementation record.
 - `plans/archive/` — completed plans retained for historical reference.
 
 ## Run the backend

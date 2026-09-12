@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
+import { LayoutDashboard, Plus } from 'lucide-react';
 import { fetchLogs, createLog, deleteLog, updateLog } from './api';
+import Dashboard from './components/dashboard/Dashboard';
 import LogForm from './components/LogForm';
-import LogList from './components/LogList';
 
 const defaultTypes = ['Medicine', 'Food', 'Custom'];
 
 export default function App() {
   const [logs, setLogs] = useState([]);
   const [selectedType, setSelectedType] = useState('Medicine');
+  const [activeView, setActiveView] = useState('dashboard');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -20,6 +22,8 @@ export default function App() {
     try {
       const entries = await fetchLogs();
       setLogs(entries);
+      if (!entries.length) setActiveView('add');
+      setError('');
     } catch (err) {
       setError('Unable to load logs.');
     } finally {
@@ -65,34 +69,28 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <header>
-        <h1>Log All The Things</h1>
-        <p>Track medicine, food, and custom events in one place.</p>
+      <header className="app-header">
+        <div className="brand-mark" aria-hidden="true">LT</div>
+        <div><h1>Log All The Things</h1><p>Track medicine, food, and everyday events.</p></div>
       </header>
-
-      <section className="controls">
-        <div className="tabs">
-          {defaultTypes.map(type => (
-            <button
-              key={type}
-              className={selectedType === type ? 'active' : ''}
-              onClick={() => setSelectedType(type)}
-            >
-              {type}
-            </button>
-          ))}
-        </div>
-        <LogForm type={selectedType} onSubmit={handleCreate} />
-      </section>
-
-      <section className="history">
-        <div className="history-header">
-          <h2>Recent logs</h2>
-          <span>{loading ? 'Loading…' : `${logs.length} entries`}</span>
-        </div>
-        {error && <div className="error-message">{error}</div>}
-        <LogList logs={logs} onUpdate={handleUpdate} onDelete={handleDelete} />
-      </section>
+      <nav className="view-switcher" aria-label="Application views">
+        <button type="button" aria-pressed={activeView === 'dashboard'} onClick={() => setActiveView('dashboard')}><LayoutDashboard size={18} /> Dashboard</button>
+        <button type="button" aria-pressed={activeView === 'add'} onClick={() => setActiveView('add')}><Plus size={18} /> Add log</button>
+      </nav>
+      {activeView === 'dashboard' ? (
+        <Dashboard logs={logs} loading={loading} error={error} onRetry={loadLogs} onAddLog={() => setActiveView('add')} onUpdate={handleUpdate} onDelete={handleDelete} />
+      ) : (
+        <main className="add-log-view">
+          <div className="view-heading"><p className="eyebrow">New entry</p><h1>Add a log</h1></div>
+          {error && <div className="error-message" role="alert">{error}</div>}
+          <section className="controls">
+            <div className="tabs" aria-label="Log type">
+              {defaultTypes.map(type => <button type="button" key={type} aria-pressed={selectedType === type} onClick={() => setSelectedType(type)}>{type}</button>)}
+            </div>
+            <LogForm type={selectedType} onSubmit={handleCreate} />
+          </section>
+        </main>
+      )}
     </div>
   );
 }

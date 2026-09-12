@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { medicineTypes } from '../medicineTypes';
 
-export default function LogList({ logs, onUpdate, onDelete }) {
+export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No logs yet. Add a medicine, food, or custom event log.' }) {
   const [editingId, setEditingId] = useState(null);
   const [draft, setDraft] = useState(null);
   const [busyId, setBusyId] = useState(null);
 
   if (!logs.length) {
-    return <p className="empty-state">No logs yet. Add a medicine, food, or custom event log.</p>;
+    return <p className="empty-state">{emptyMessage}</p>;
   }
 
   const typeNameFromId = id => {

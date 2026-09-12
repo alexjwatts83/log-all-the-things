@@ -1,5 +1,8 @@
 # Dashboard Implementation Plan
 
+> **Implemented:** The version 1 client-side dashboard described here is complete. The scaling
+> threshold and server-side aggregation section remain future guidance rather than active work.
+
 ## Overview
 
 Add a dashboard to Log All The Things that summarizes Medicine, Food, and Custom activity without

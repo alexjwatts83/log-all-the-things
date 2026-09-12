@@ -2,6 +2,22 @@
 
 React frontend for creating, viewing, editing, and deleting Medicine, Food, and Custom log entries.
 
+## Dashboard
+
+The default populated view summarizes the existing log history without additional API calls. It
+includes:
+
+- 7-day, 30-day, 90-day, and all-time ranges.
+- Total logs, logged Medicine quantity, active days, and most common log type.
+- A daily activity trend that switches to weekly buckets for long all-time histories.
+- Type percentages and Medicine quantities grouped by medicine name.
+- Recent activity filters for Medicine, Food, and Custom logs.
+- Existing inline Edit and confirmed Delete actions.
+
+Dashboard values are derived from the same in-memory log collection used by create, edit, and
+delete, so successful changes appear immediately without another fetch. Date ranges use local
+calendar-day boundaries while API timestamps remain UTC.
+
 ## Prerequisites
 
 - Node.js 20 or later
@@ -84,6 +100,7 @@ Run these commands from `src/LogAllTheThings.Web`, or add `--prefix .\src\LogAll
 | `npm run dev` | Start the Vite development server |
 | `npm run build` | Create a production build in `dist` |
 | `npm run preview` | Serve the production build locally for inspection |
+| `npm run test` | Run dashboard metric tests with Vitest |
 
 ## Build
 
@@ -150,12 +167,16 @@ by Git.
 src/
   api.js                 API request and type mapping helpers
   App.jsx                Main application state and layout
+  dashboardMetrics.js    Pure range and dashboard aggregation helpers
+  dashboardMetrics.test.js Dashboard metric tests
+  logTypes.js            Shared log type names and colors
   main.jsx               React entry point
   medicineTypes.js       Shared Medicine selector options
   style.css              Application styles
   components/
     LogForm.jsx           Entry form
     LogList.jsx           Recent-entry list
+    dashboard/            Dashboard sections and controls
 ```
 
 ## Troubleshooting
