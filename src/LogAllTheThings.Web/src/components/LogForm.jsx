@@ -67,7 +67,6 @@ export default function LogForm({ type, onSubmit }) {
 
   return (
     <form className="log-form" onSubmit={handleSubmit}>
-      <h2>Log {type}</h2>
       {isCustom && (
         <label>
           Event name

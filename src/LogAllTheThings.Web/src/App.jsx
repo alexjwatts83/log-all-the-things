@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { LayoutDashboard, Plus } from 'lucide-react';
 import { fetchLogs, createLog, deleteLog, updateLog } from './api';
 import Dashboard from './components/dashboard/Dashboard';
 import LogForm from './components/LogForm';
@@ -77,23 +76,44 @@ export default function App() {
         <div className="brand-mark" aria-hidden="true">LT</div>
         <div><h1>Log All The Things</h1><p>Track medicine, food, and everyday events.</p></div>
       </header>
-      <nav className="view-switcher" aria-label="Application views">
-        <button type="button" aria-pressed={activeView === 'dashboard'} onClick={() => setActiveView('dashboard')}><LayoutDashboard size={18} /> Dashboard</button>
-        <button type="button" aria-pressed={activeView === 'add'} onClick={() => setActiveView('add')}><Plus size={18} /> Add log</button>
-      </nav>
-      {activeView === 'dashboard' ? (
-        <Dashboard logs={logs} loading={loading} error={error} onRetry={loadLogs} onAddLog={() => setActiveView('add')} onUpdate={handleUpdate} onDelete={handleDelete} />
-      ) : (
-        <main className="add-log-view">
-          {error && <div className="error-message" role="alert">{error}</div>}
-          <section className="controls">
-            <div className="tabs" aria-label="Log type">
-              {defaultTypes.map(type => <button type="button" key={type} aria-pressed={selectedType === type} onClick={() => setSelectedType(type)}>{type}</button>)}
+      <main className="main-content">
+        {error && <div className="error-message" role="alert">{error}</div>}
+        <div className="log-card-container">
+          <div className="log-type-tabs" role="tablist" aria-label="Main view and log types">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={activeView === 'dashboard'}
+              onClick={() => setActiveView('dashboard')}
+            >
+              Dashboard
+            </button>
+            {defaultTypes.map(type => (
+              <button
+                type="button"
+                key={type}
+                role="tab"
+                aria-selected={activeView === 'add' && selectedType === type}
+                onClick={() => {
+                  setSelectedType(type);
+                  setActiveView('add');
+                }}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+          {activeView === 'dashboard' ? (
+            <div className="tab-content dashboard-tab-content">
+              <Dashboard logs={logs} loading={loading} error={error} onRetry={loadLogs} onAddLog={() => { setSelectedType('Medicine'); setActiveView('add'); }} onUpdate={handleUpdate} onDelete={handleDelete} />
             </div>
-            <LogForm type={selectedType} onSubmit={handleCreate} />
-          </section>
-        </main>
-      )}
+          ) : (
+            <div className="tab-content">
+              <LogForm type={selectedType} onSubmit={handleCreate} />
+            </div>
+          )}
+        </div>
+      </main>
     </div>
   );
 }

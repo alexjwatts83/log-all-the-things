@@ -115,14 +115,33 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .log-actions button:disabled { cursor: wait; opacity: 0.6; }
 .show-all-button { margin: 1rem auto 0; background: transparent; color: #0d756c; border: 1px solid #9db7b3; }
 
-.add-log-view { max-width: 760px; }
-.controls { margin-top: 1.25rem; display: grid; gap: 1rem; }
-.tabs { display: flex; gap: 0.25rem; padding: 0.25rem; width: fit-content; background: #dfe6e8; border-radius: 7px; }
-.log-form { background: #fff; border: 1px solid #d4dde0; padding: 1.4rem; }
-.log-form h2 { margin-top: 0; font-family: 'Manrope', sans-serif; font-size: 1.2rem; }
+.main-content { margin-top: 1.5rem; }
+.log-card-container { margin-top: 0; }
+.log-type-tabs { display: flex; gap: 0.25rem; border-bottom: 2px solid #d4dde0; }
+.log-type-tabs button {
+  padding: 0.75rem 1.25rem; border: 1px solid transparent; border-bottom: 0;
+  border-top-left-radius: 6px; border-top-right-radius: 6px; background: #dfe6e8;
+  color: #4b5963; font-weight: 600; cursor: pointer; margin-bottom: -2px; transition: all 0.15s ease;
+}
+.log-type-tabs button[aria-selected='true'] {
+  background: #fff; color: #0d756c; border-color: #d4dde0; border-bottom-color: #fff; font-weight: 700;
+}
+.tab-content { background: #fff; border: 1px solid #d4dde0; border-top: 0; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
+.log-form { background: #fff; border: 0; border-radius: 0 0 6px 6px; padding: 1.5rem; }
+.dashboard-tab-content { padding: 1.5rem; }
 .log-form label, .edit-log-form label { display: grid; gap: 0.45rem; margin-bottom: 1rem; font-weight: 600; }
 .log-form input, .log-form select, .log-form textarea, .edit-log-form input, .edit-log-form select, .edit-log-form textarea {
   width: 100%; border: 1px solid #b9c6ca; border-radius: 4px; padding: 0.78rem 0.85rem; background: #f9fbfb; color: #17212b;
+}
+.log-form select, .edit-log-form select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2317212b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 2.75rem;
 }
 .log-form > button { border: 0; border-radius: 5px; padding: 0.75rem 1rem; background: #0d756c; color: #fff; cursor: pointer; font-weight: 700; }
 .medicine-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.3fr); gap: 1rem; }
