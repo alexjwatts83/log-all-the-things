@@ -45,6 +45,15 @@ describe('dashboard metrics', () => {
     expect(buildDailySeries([logs[0], { typeId: 2, timestamp: new Date(2026, 4, 1).toISOString() }], 'all', now)).toHaveLength(2);
   });
 
+  it('includes car logs in dashboard series and type breakdowns', () => {
+    const carLog = { typeId: 4, timestamp: new Date(2026, 8, 12, 10).toISOString(), carEventName: 'Petrol', carCost: 75.5 };
+    const series = buildDailySeries([carLog], '7', now);
+    const breakdown = buildTypeBreakdown([carLog]);
+
+    expect(series.find(day => day.Car === 1)).toBeTruthy();
+    expect(breakdown.find(type => type.name === 'Car')).toMatchObject({ count: 1, percentage: 100 });
+  });
+
   it('builds type percentages and preserves unknown types', () => {
     const result = buildTypeBreakdown([...logs.slice(0, 2), { typeId: 99, timestamp: logs[0].timestamp }]);
     expect(result.find(type => type.name === 'Medicine')).toMatchObject({ count: 1, percentage: 33 });

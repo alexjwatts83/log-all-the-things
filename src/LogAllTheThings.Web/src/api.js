@@ -5,6 +5,7 @@ const typeMap = {
   Medicine: 1,
   Food: 2,
   Custom: 3,
+  Car: 4,
 };
 
 function toRequestBody(log) {
@@ -16,6 +17,8 @@ function toRequestBody(log) {
     CustomName: log.customName ?? null,
     MedicineName: log.medicineName ?? null,
     MedicineQuantity: log.medicineQuantity ?? null,
+    CarEventName: log.carEventName ?? null,
+    CarCost: log.carCost ?? null,
     Timestamp: log.timestamp ? new Date(log.timestamp).toISOString() : null,
   };
 }

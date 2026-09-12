@@ -2,6 +2,7 @@ export const logTypes = [
   { id: 1, name: 'Medicine', color: '#2563eb' },
   { id: 2, name: 'Food', color: '#15803d' },
   { id: 3, name: 'Custom', color: '#b45309' },
+  { id: 4, name: 'Car', color: '#be123c' },
 ];
 
 export function getLogType(typeId) {

@@ -18,5 +18,7 @@ namespace LogAllTheThings.Api.Models
         public string? CustomName { get; set; }
         public string? MedicineName { get; set; }
         public int? MedicineQuantity { get; set; }
+        public string? CarEventName { get; set; }
+        public decimal? CarCost { get; set; }
     }
 }

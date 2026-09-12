@@ -3,8 +3,14 @@ import { CheckCircle2, X } from 'lucide-react';
 import { fetchLogs, createLog, deleteLog, updateLog } from './api';
 import Dashboard from './components/dashboard/Dashboard';
 import LogForm from './components/LogForm';
+import LogList from './components/LogList';
 
-const defaultTypes = ['Medicine', 'Food', 'Custom'];
+const defaultTypes = [
+  { id: 1, name: 'Medicine' },
+  { id: 2, name: 'Food' },
+  { id: 3, name: 'Custom' },
+  { id: 4, name: 'Car' },
+];
 
 function sortLogsByTimestamp(logList) {
   return [...logList].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -17,6 +23,10 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [toast, setToast] = useState('');
+  const selectedTypeDefinition = defaultTypes.find(type => type.name === selectedType);
+  const recentTypeLogs = logs
+    .filter(log => log.typeId === selectedTypeDefinition?.id)
+    .slice(0, 20);
 
   useEffect(() => {
     loadLogs();
@@ -100,15 +110,15 @@ export default function App() {
             {defaultTypes.map(type => (
               <button
                 type="button"
-                key={type}
+                key={type.id}
                 role="tab"
-                aria-selected={activeView === 'add' && selectedType === type}
+                aria-selected={activeView === 'add' && selectedType === type.name}
                 onClick={() => {
-                  setSelectedType(type);
+                  setSelectedType(type.name);
                   setActiveView('add');
                 }}
               >
-                {type}
+                {type.name}
               </button>
             ))}
           </div>
@@ -119,6 +129,18 @@ export default function App() {
           ) : (
             <div className="tab-content">
               <LogForm type={selectedType} onSubmit={handleCreate} />
+              <section className="type-recent-logs" aria-labelledby="type-recent-heading">
+                <div className="section-heading">
+                  <h2 id="type-recent-heading">Recent {selectedType.toLowerCase()} logs</h2>
+                  <span>Latest first</span>
+                </div>
+                <LogList
+                  logs={recentTypeLogs}
+                  onUpdate={handleUpdate}
+                  onDelete={handleDelete}
+                  emptyMessage={`No ${selectedType.toLowerCase()} logs yet.`}
+                />
+              </section>
             </div>
           )}
         </div>

@@ -71,6 +71,8 @@ namespace LogAllTheThings.Api.Controllers
             entry.CustomName = update.CustomName;
             entry.MedicineName = update.MedicineName;
             entry.MedicineQuantity = update.MedicineQuantity;
+            entry.CarEventName = update.CarEventName;
+            entry.CarCost = update.CarCost;
             if (update.Timestamp != default)
             {
                 entry.Timestamp = update.Timestamp;
@@ -114,6 +116,36 @@ namespace LogAllTheThings.Api.Controllers
                 {
                     return "Medicine quantity must be a positive whole number.";
                 }
+
+                entry.CarEventName = null;
+                entry.CarCost = null;
+            }
+            else if (entry.TypeId == 4)
+            {
+                if (string.IsNullOrWhiteSpace(entry.CarEventName))
+                {
+                    return "Car event type is required.";
+                }
+
+                entry.CarEventName = SupportedCarEvents.FindCanonicalName(entry.CarEventName);
+                if (entry.CarEventName is null)
+                {
+                    return "Unsupported car event type.";
+                }
+
+                entry.Description = entry.CarEventName;
+                if (entry.CarCost is null or <= 0)
+                {
+                    return "Car cost must be greater than zero.";
+                }
+
+                if (decimal.Round(entry.CarCost.Value, 2) != entry.CarCost.Value)
+                {
+                    return "Car cost must have no more than two decimal places.";
+                }
+
+                entry.MedicineName = null;
+                entry.MedicineQuantity = null;
             }
             else
             {
@@ -124,6 +156,8 @@ namespace LogAllTheThings.Api.Controllers
 
                 entry.MedicineName = null;
                 entry.MedicineQuantity = null;
+                entry.CarEventName = null;
+                entry.CarCost = null;
             }
 
             return null;

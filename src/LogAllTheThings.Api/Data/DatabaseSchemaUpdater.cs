@@ -4,7 +4,7 @@ namespace LogAllTheThings.Api.Data;
 
 public static class DatabaseSchemaUpdater
 {
-    public static void AddMedicineColumns(LogsDbContext db)
+    public static void AddLogEntryColumns(LogsDbContext db)
     {
         var columns = GetColumns(db);
 
@@ -16,6 +16,16 @@ public static class DatabaseSchemaUpdater
         if (!columns.Contains("MedicineQuantity"))
         {
             db.Database.ExecuteSqlRaw("ALTER TABLE LogEntries ADD COLUMN MedicineQuantity INTEGER NULL");
+        }
+
+        if (!columns.Contains("CarEventName"))
+        {
+            db.Database.ExecuteSqlRaw("ALTER TABLE LogEntries ADD COLUMN CarEventName TEXT NULL");
+        }
+
+        if (!columns.Contains("CarCost"))
+        {
+            db.Database.ExecuteSqlRaw("ALTER TABLE LogEntries ADD COLUMN CarCost TEXT NULL");
         }
     }
 

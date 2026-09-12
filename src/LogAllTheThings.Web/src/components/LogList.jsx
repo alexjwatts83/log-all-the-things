@@ -1,6 +1,12 @@
 import { useState } from 'react';
+import { carEventTypes } from '../carEventTypes';
 import { formatDateTimeLocal } from '../dashboardMetrics';
 import { medicineTypes } from '../medicineTypes';
+
+const currencyFormatter = new Intl.NumberFormat(undefined, {
+  style: 'currency',
+  currency: 'AUD',
+});
 
 export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No logs yet. Add a medicine, food, or custom event log.' }) {
   const [editingId, setEditingId] = useState(null);
@@ -16,6 +22,7 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
     if (id === 1) return 'Medicine';
     if (id === 2) return 'Food';
     if (id === 3) return 'Custom';
+    if (id === 4) return 'Car';
     return 'General';
   };
 
@@ -30,6 +37,8 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
       customName: log.customName ?? '',
       medicineName: log.medicineName ?? medicineTypes[0],
       medicineQuantity: String(log.medicineQuantity ?? 2),
+      carEventName: log.carEventName ?? carEventTypes[0],
+      carCost: String(log.carCost ?? ''),
       timestamp: formatDateTimeLocal(log.timestamp),
     });
   }
@@ -37,9 +46,13 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
   async function saveEdit(event, log) {
     event.preventDefault();
     const isMedicine = log.typeId === 1;
+    const isCar = log.typeId === 4;
     const quantity = Number(draft.medicineQuantity);
-    if ((!isMedicine && !draft.description.trim()) ||
-        (isMedicine && (!draft.medicineName || !Number.isInteger(quantity) || quantity < 1))) {
+    const cost = Number(draft.carCost);
+    const validCost = /^\d+(\.\d{1,2})?$/.test(draft.carCost) && cost > 0;
+    if ((!isMedicine && !isCar && !draft.description.trim()) ||
+      (isMedicine && (!draft.medicineName || !Number.isInteger(quantity) || quantity < 1)) ||
+      (isCar && (!draft.carEventName || !validCost))) {
       return;
     }
 
@@ -47,6 +60,7 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
     const saved = await onUpdate(log.id, {
       ...draft,
       medicineQuantity: isMedicine ? quantity : undefined,
+      carCost: isCar ? cost : undefined,
       timestamp: showCustomDate && draft.timestamp ? new Date(draft.timestamp).toISOString() : log.timestamp,
     });
     setBusyId(null);
@@ -73,7 +87,9 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
         const typeName = log.type?.name ?? log.type?.Name ?? log.type ?? typeNameFromId(log.typeId ?? log.typeId);
         const metadata = typeName === 'Medicine'
           ? `${log.medicineName || 'Medicine'}${log.medicineQuantity ? ` x${log.medicineQuantity}` : ''}`
-          : log.category || log.customName || 'General';
+          : typeName === 'Car'
+            ? `${log.carEventName || 'Car'} · ${currencyFormatter.format(Number(log.carCost ?? 0))}`
+            : log.category || log.customName || 'General';
         return (
           <article key={log.id} className="log-card">
             <header>
@@ -103,6 +119,25 @@ export default function LogList({ logs, onUpdate, onDelete, emptyMessage = 'No l
                       Quantity
                       <input type="number" min="1" step="1" value={draft.medicineQuantity}
                              onChange={event => setDraft(current => ({ ...current, medicineQuantity: event.target.value }))}
+                             required />
+                    </label>
+                  </div>
+                ) : log.typeId === 4 ? (
+                  <div className="medicine-fields">
+                    <label>
+                      Car activity
+                      <select value={draft.carEventName}
+                              onChange={event => setDraft(current => ({ ...current, carEventName: event.target.value }))}
+                              required>
+                        {carEventTypes.map(carEvent => (
+                          <option key={carEvent} value={carEvent}>{carEvent}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      Cost
+                      <input type="number" min="0.01" step="0.01" inputMode="decimal" value={draft.carCost}
+                             onChange={event => setDraft(current => ({ ...current, carCost: event.target.value }))}
                              required />
                     </label>
                   </div>

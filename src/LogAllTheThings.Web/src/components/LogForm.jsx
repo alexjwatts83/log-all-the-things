@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { carEventTypes } from '../carEventTypes';
 import { formatDateTimeLocal } from '../dashboardMetrics';
 import { medicineTypes } from '../medicineTypes';
 
@@ -9,15 +10,20 @@ export default function LogForm({ type, onSubmit }) {
   const [customName, setCustomName] = useState('');
   const [medicineName, setMedicineName] = useState(medicineTypes[0]);
   const [medicineQuantity, setMedicineQuantity] = useState('2');
+  const [carEventName, setCarEventName] = useState(carEventTypes[0]);
+  const [carCost, setCarCost] = useState('');
   const [showCustomDate, setShowCustomDate] = useState(false);
   const [timestamp, setTimestamp] = useState('');
 
   const isCustom = type === 'Custom';
   const isMedicine = type === 'Medicine';
+  const isCar = type === 'Car';
 
   useEffect(() => {
     setMedicineName(medicineTypes[0]);
     setMedicineQuantity('2');
+    setCarEventName(carEventTypes[0]);
+    setCarCost('');
     setShowCustomDate(false);
     setTimestamp('');
   }, [type]);
@@ -30,13 +36,19 @@ export default function LogForm({ type, onSubmit }) {
     customName: customName || undefined,
     medicineName: isMedicine ? medicineName : undefined,
     medicineQuantity: isMedicine ? Number(medicineQuantity) : undefined,
+    carEventName: isCar ? carEventName : undefined,
+    carCost: isCar ? Number(carCost) : undefined,
     timestamp: showCustomDate && timestamp ? new Date(timestamp).toISOString() : undefined,
-  }), [type, description, details, category, customName, isMedicine, medicineName, medicineQuantity, showCustomDate, timestamp]);
+  }), [type, description, details, category, customName, isMedicine, medicineName, medicineQuantity, isCar, carEventName, carCost, showCustomDate, timestamp]);
 
   async function handleSubmit(e) {
     e.preventDefault();
     const quantity = Number(medicineQuantity);
-    if ((!isMedicine && !description.trim()) || (isMedicine && (!medicineName || !Number.isInteger(quantity) || quantity < 1))) {
+    const cost = Number(carCost);
+    const validCost = /^\d+(\.\d{1,2})?$/.test(carCost) && cost > 0;
+    if ((!isMedicine && !isCar && !description.trim()) ||
+      (isMedicine && (!medicineName || !Number.isInteger(quantity) || quantity < 1)) ||
+      (isCar && (!carEventName || !validCost))) {
       return;
     }
 
@@ -51,6 +63,8 @@ export default function LogForm({ type, onSubmit }) {
     setCustomName('');
     setMedicineName(medicineTypes[0]);
     setMedicineQuantity('2');
+    setCarEventName(carEventTypes[0]);
+    setCarCost('');
     setShowCustomDate(false);
     setTimestamp('');
   }
@@ -101,7 +115,31 @@ export default function LogForm({ type, onSubmit }) {
           </label>
         </div>
       )}
-      {!isMedicine && (
+      {isCar && (
+        <div className="medicine-fields">
+          <label>
+            Car activity
+            <select value={carEventName} onChange={e => setCarEventName(e.target.value)} required>
+              {carEventTypes.map(carEvent => (
+                <option key={carEvent} value={carEvent}>{carEvent}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Cost
+            <input
+              type="number"
+              min="0.01"
+              step="0.01"
+              inputMode="decimal"
+              value={carCost}
+              onChange={e => setCarCost(e.target.value)}
+              required
+            />
+          </label>
+        </div>
+      )}
+      {!isMedicine && !isCar && (
         <label>
           Description
           <input

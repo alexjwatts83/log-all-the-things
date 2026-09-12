@@ -3,7 +3,7 @@ import { logTypes } from '../../logTypes';
 const formatDate = value => new Date(`${value}T00:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 
 export default function ActivityChart({ data }) {
-  const totals = data.map(day => day.Medicine + day.Food + day.Custom + day.Other);
+  const totals = data.map(day => logTypes.reduce((sum, type) => sum + day[type.name], day.Other));
   const total = totals.reduce((sum, value) => sum + value, 0);
   const maximum = Math.max(1, ...totals);
   const labelInterval = Math.max(1, Math.ceil(data.length / 6));
