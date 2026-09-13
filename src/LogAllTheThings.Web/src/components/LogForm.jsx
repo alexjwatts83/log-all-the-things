@@ -236,7 +236,9 @@ export default function LogForm({ type, onSubmit }) {
           placeholder="Optional category or tag"
         />
       </label>
-      <button type="submit">Save {type} log</button>
+      <button type="submit" className={`save-log-button save-log-button--${type.toLowerCase()}`}>
+        Save {type} log
+      </button>
     </form>
   );
 }

@@ -22,7 +22,7 @@ function toRequestBody(log) {
     CarCost: log.carCost ?? null,
     LifeEventName: log.lifeEventName ?? null,
     LifeCost: log.lifeCost ?? null,
-    Timestamp: log.timestamp ? new Date(log.timestamp).toISOString() : null,
+    Timestamp: log.timestamp ? new Date(log.timestamp).toISOString() : undefined,
   };
 }
 

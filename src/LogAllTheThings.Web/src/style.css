@@ -117,7 +117,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 .main-content { margin-top: 1.5rem; }
 .log-card-container { margin-top: 0; }
-.log-type-tabs { display: flex; gap: 0.25rem; overflow-x: auto; border-bottom: 2px solid #d4dde0; }
+.log-type-tab-header { display: flex; align-items: stretch; gap: 0.25rem; border-bottom: 2px solid #d4dde0; }
+.log-type-tabs { display: flex; flex: 1 1 auto; gap: 0.25rem; overflow-x: auto; }
 .log-type-tabs button {
   flex: 0 0 auto;
   padding: 0.75rem 1.25rem; border: 1px solid transparent; border-bottom: 0;
@@ -126,6 +127,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 }
 .log-type-tabs button[aria-selected='true'] {
   background: #fff; color: #0d756c; border-color: #d4dde0; border-bottom-color: #fff; font-weight: 700;
+}
+.add-custom-button {
+  flex: 0 0 2.75rem; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid transparent; border-bottom: 0; border-radius: 6px 6px 0 0;
+  background: #dfe6e8; color: #4b5963; cursor: pointer; margin-bottom: -2px;
+}
+.add-custom-button[aria-pressed='true'] {
+  background: #fff; color: #0d756c; border-color: #d4dde0; border-bottom-color: #fff;
 }
 .tab-content { background: #fff; border: 1px solid #d4dde0; border-top: 0; border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
 .log-form { background: #fff; border: 0; border-radius: 0 0 6px 6px; padding: 1.5rem; }
@@ -144,7 +153,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   background-size: 1rem;
   padding-right: 2.75rem;
 }
-.log-form > button { border: 0; border-radius: 5px; padding: 0.75rem 1rem; background: #0d756c; color: #fff; cursor: pointer; font-weight: 700; }
+.save-log-button { border: 0; border-radius: 5px; padding: 0.75rem 1rem; background: #0d756c; color: #fff; cursor: pointer; font-weight: 700; }
+.save-log-button--medicine { background: #2563eb; }
+.save-log-button--food { background: #f2c94c; color: #17212b; }
+.save-log-button--car { background: #be123c; }
+.save-log-button--life { background: #7c3aed; }
 .medicine-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.3fr); gap: 1rem; }
 .edit-log-form { display: grid; gap: 0.15rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #d5dde0; }
 .date-mode-toggle { display: grid; gap: 0.45rem; margin-bottom: 1rem; font-weight: 600; }

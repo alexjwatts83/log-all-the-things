@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle2, X } from 'lucide-react';
+import { CheckCircle2, Plus, X } from 'lucide-react';
 import { fetchLogs, createLog, deleteLog, updateLog } from './api';
 import Dashboard from './components/dashboard/Dashboard';
 import LogForm from './components/LogForm';
@@ -99,29 +99,44 @@ export default function App() {
       <main className="main-content">
         {error && <div className="error-message" role="alert">{error}</div>}
         <div className="log-card-container">
-          <div className="log-type-tabs" role="tablist" aria-label="Main view and log types">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeView === 'dashboard'}
-              onClick={() => setActiveView('dashboard')}
-            >
-              Dashboard
-            </button>
-            {defaultTypes.map(type => (
+          <div className="log-type-tab-header">
+            <div className="log-type-tabs" role="tablist" aria-label="Main view and log types">
               <button
                 type="button"
-                key={type.id}
                 role="tab"
-                aria-selected={activeView === 'add' && selectedType === type.name}
-                onClick={() => {
-                  setSelectedType(type.name);
-                  setActiveView('add');
-                }}
+                aria-selected={activeView === 'dashboard'}
+                onClick={() => setActiveView('dashboard')}
               >
-                {type.name}
+                Dashboard
               </button>
-            ))}
+              {defaultTypes.filter(type => type.name !== 'Custom').map(type => (
+                <button
+                  type="button"
+                  key={type.id}
+                  role="tab"
+                  aria-selected={activeView === 'add' && selectedType === type.name}
+                  onClick={() => {
+                    setSelectedType(type.name);
+                    setActiveView('add');
+                  }}
+                >
+                  {type.name}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="add-custom-button"
+              title="Add Custom"
+              aria-label="Add Custom"
+              aria-pressed={activeView === 'add' && selectedType === 'Custom'}
+              onClick={() => {
+                setSelectedType('Custom');
+                setActiveView('add');
+              }}
+            >
+              <Plus size={20} aria-hidden="true" />
+            </button>
           </div>
           {activeView === 'dashboard' ? (
             <div className="tab-content dashboard-tab-content">
